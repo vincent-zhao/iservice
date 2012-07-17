@@ -1,22 +1,21 @@
 {
   "name": "iservice",
-    "version": "0.1.0",
+    "version": "0.0.1",
     "author": "Aleafs Zhang (zhangxc83@gmail.com)",
     "contributors": [
-      {"name": "fengmk2", "email": "fengmk2@gmail.com", "web": "http://fengmk2.github.com"} 
-    ],
-    "homepage": "https://github.com/aleafs/node-cluster",
-    "repository": "git://github.com/aleafs/node-cluster.git",
-    "description": "A graceful node library to contribute a permanent \"master-worker\" server.",
-    "keywords": [ "cluster", "child-process", "master-worker" ],
-    "dependencies": {},
+      ],
+    "homepage": "git@github.com:aleafs/iservice.git",
+    "description": "A high speed file splitor on Node.js",
+    "keywords": [ "zookeeper", "config server", "service" ],
+    "dependencies": {
+      "zookeeper"   : "3.4.1-4"
+    },
     "engines": {
       "node": ">=0.6.9"
     },
     "devDependencies": {
-      "should": ">=0.4.2",
-      "mocha": ">=0.9.0",
-      "rewire": "*",
+      "should"        : ">=0.4.2",
+      "mocha"         : ">=0.9.0",
       "visionmedia-jscoverage" : ">=1.0.0"
     },
     "main"  : "./index.js",
