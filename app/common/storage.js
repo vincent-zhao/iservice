@@ -79,7 +79,7 @@ exports.create  = function (options) {
         _self.get(key, callback);
       });
     }
-    _handle.a_get(normalize(key), false, function (code, error, stat, data) {
+    _handle.a_get(normalize('/' + key), false, function (code, error, stat, data) {
       if (Zookeeper.ZOK === code) {
         error = null;
       } else {
@@ -107,7 +107,7 @@ exports.create  = function (options) {
       });
     }
 
-    key = normalize(key);
+    key = normalize('/' + key);
     _handle.a_set(key, data, -1, function (code, error) {
       if (Zookeeper.ZNONODE !== code) {
         return callback((Zookeeper.ZOK === code) ? null : iError.create('UpdateError', error));
