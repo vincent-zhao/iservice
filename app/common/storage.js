@@ -21,8 +21,7 @@ exports.create  = function (options) {
     'hosts' : 'localhost:2181',
     'root'  : '/',
     'user'  : '',
-    'pass'  : '',
-    'readonly'  : true
+    'pass'  : ''
   };
   for (var i in options) {
     _options[i] = options[i];
@@ -49,7 +48,7 @@ exports.create  = function (options) {
   };
   (new Zookeeper()).connect(_conn, function (error, zk) {
     if (error) {
-      throw error;
+      throw iError.create('ConnectError', error);
     }
 
     _handle = zk;
@@ -61,13 +60,18 @@ exports.create  = function (options) {
   /* }}} */
 
   var Storage   = function () {
-    if (!(this instanceof Storage)) {
-      return new Storage();
-    }
     Emitter.call(this);
   };
   Util.inherits(Storage, Emitter);
 
+  /* {{{ public prototype get() */
+  /**
+   * Get value from storage by key
+   *
+   * @access public
+   * @param {String} key
+   * @param {Function} callback
+   */
   Storage.prototype.get = function (key, callback) {
     var _self = this;
     if (!_handle) {
@@ -76,17 +80,25 @@ exports.create  = function (options) {
       });
     }
     _handle.a_get(normalize(key), false, function (code, error, stat, data) {
-      if (Zookeeper.ZOK !== code) {
+      if (Zookeeper.ZOK === code) {
         error = null;
-      } else if (Zookeeper.ZNONODE === code) {
-        error = iError.create('NotFound', error);
       } else {
-        error = iError.create('ZookeeperError', error);
+        error = iError.create(Zookeeper.ZNONODE === code ? 'NotFound' : 'ZookeeperError', error);
       }
-      callback(error, data);
+      callback && callback(error, data);
     });
   };
+  /* }}} */
 
+  /* {{{ public prototype set() */
+  /**
+   * Set value into storage by key
+   *
+   * @access public
+   * @param {String} key
+   * @param {String} data
+   * @param {Function} callback
+   */
   Storage.prototype.set = function (key, data, callback) {
     var _self = this;
     if (!_handle) {
@@ -94,7 +106,29 @@ exports.create  = function (options) {
         _self.set(key, data, callback);
       });
     }
+
+    key = normalize(key);
+    _handle.a_set(key, data, -1, function (code, error) {
+      if (Zookeeper.ZNONODE !== code) {
+        return callback((Zookeeper.ZOK === code) ? null : iError.create('UpdateError', error));
+      }
+
+      _handle.a_create(key, data, 0, function (code, error) {
+        if (Zookeeper.ZNONODE !== code) {
+          return callback((Zookeeper.ZOK === code) ? null : iError.create('CreateError', error));
+        }
+
+        _handle.mkdirp(key, function (error) {
+          if (error) {
+            callback(iError.create('CreateError', error));
+          } else {
+            _self.set(key, data, callback);
+          }
+        });
+      });
+    });
   };
+  /* }}} */
 
   Storage.prototype.watch = function (key) {
   };
