@@ -25,8 +25,13 @@ exports.create = function (url) {
   }
 
   var _me   = {};
+
   _me.get   = function (p) {
     return (undefined !== paths[p]) ? paths[p] : null;
+  };
+
+  _me.shift = function () {
+    return paths.shift();
   };
 
   return _me;

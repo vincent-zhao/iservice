@@ -14,6 +14,8 @@ exports.create = function (res, url, data, info) {
   };
 
   var _done = false;
+
+  /* {{{ public function finish() */
   _me.finish = function (data, info, code) {
     if (_done) {
       return;
@@ -28,6 +30,13 @@ exports.create = function (res, url, data, info) {
     res.end(data);
     _done = true;
   };
+  /* }}} */
+
+  /* {{{ public function execute() */
+  _me.execute = function () {
+  };
+  /* }}} */
 
   return _me;
 };
+

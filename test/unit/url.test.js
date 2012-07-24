@@ -16,8 +16,8 @@ describe('url test', function () {
     _me.get(1).should.eql('bcd');
 
     var _me = url.create('a/////bcd' + encodeURIComponent('周华健') + 'hello/world');
-    _me.get(0).should.eql('a');
-    _me.get(1).should.eql('bcd周华健hello');
+    _me.shift().should.eql('a');
+    _me.shift().should.eql('bcd周华健hello');
   });
   /* }}} */
 
