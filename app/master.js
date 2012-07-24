@@ -4,10 +4,7 @@ var Master  = require('pm').createMaster({
   'pidfile'    : __dirname + '/../iservice.pid',
 });
 
-/**
- * A http service
- */
-Master.register('rest',   __dirname + '/rest.js', {
+Master.register('api',   __dirname + '/core.js', {
   'listen'  : [ 33749 ],
   'children': 1,
 });
