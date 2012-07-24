@@ -130,8 +130,53 @@ exports.create  = function (options) {
   };
   /* }}} */
 
-  Storage.prototype.watch = function (key) {
+  /* {{{ public prototype watch() */
+  /**
+   * Watch change event for a node by key
+   *
+   * @access public
+   * @param {String} key
+   * @param {Function} callback
+   */
+  var _watchers = {};
+  Storage.prototype.watch = function (key, interval, callback) {
+    var _self = this;
+    if (!_handle) {
+      return _queues.push(function () {
+        _self.watch(key, interval, callback);
+      });
+    }
+
+    key = normalize('/' + key);
+    var _check = function (next) {
+      _handle.a_get(key, false, function (code, error, stat, data) {
+        // XXX: NotFound => ...
+        if (!_watchers[key]) {
+          _watch();
+        }
+
+        if (data && data !== _watchers[key]) {
+          callback(_watchers[key], data);
+        }
+
+        if (Zookeeper.ZOK === code) {
+          _watchers[key] = data;
+        }
+
+        next && next();
+      });
+    };
+
+    (function _watch() {
+      _handle.aw_get(key, function (type, stat, path) {
+        _watch();
+        _check();
+      }, function (code, error, stat, data) {
+        _watchers[key] = data;
+      });
+    })();
   };
+  /* }}} */
 
   return new Storage();
 };
