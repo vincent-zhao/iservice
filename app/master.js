@@ -7,7 +7,7 @@ var Master  = require('pm').createMaster({
 /**
  * A http service
  */
-Master.register('rest',   __dirname + '/rest/index.js', {
+Master.register('rest',   __dirname + '/rest.js', {
   'listen'  : [ 33749 ],
   'children': 1,
 });

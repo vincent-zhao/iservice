@@ -1,7 +1,7 @@
 /* vim: set expandtab tabstop=2 shiftwidth=2 foldmethod=marker: */
 
 var should  = require('should');
-var watcher = require(__dirname + '/../../app/rest/watcher.js');
+var watcher = require(__dirname + '/../../app/common/watcher.js');
 
 describe('watcher test', function () {
 
