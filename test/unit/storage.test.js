@@ -15,10 +15,10 @@ describe('storage with zookeeper test', function () {
     _me.get('/i/am/not/exists/' + process.pid, function (error, data) {
       error.should.have.property('name', 'NotFound');
       should.ok(!data);
-      _me.set('/key1', process.pid, function (error) {
+      _me.set('/test/key1', process.pid, function (error) {
         should.ok(!error);
 
-        _me.get('key1', function (error, data) {
+        _me.get('test/key1', function (error, data) {
           should.ok(!error);
           data.should.eql(process.pid.toString());
           done();
@@ -52,5 +52,16 @@ describe('storage with zookeeper test', function () {
     });
   });
   /* }}} */
+
+  it('should_zookeeper_remove_works_fine', function (done) {
+    var _me = storage.create({
+      'hosts' : 'localhost:2181',
+    //    'root': 'unittest'
+    });
+
+    _me.remove('/i/am', function (error) {
+      done();
+    });
+  });
 
 });

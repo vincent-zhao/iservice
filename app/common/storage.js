@@ -11,6 +11,46 @@ var normalize = function (key) {
   return key.replace(/\/{2,}/g, '/').trim();
 };
 
+/* {{{ function getAllNodes() */
+
+var getAllNodes = function (zk, root, callback) {
+  var _list = [];
+  var _dump = function (key, cb) {
+    var num = 0;
+    zk.a_get_children(key, false, function (code, error, children) {
+      if (Zookeeper.ZOK !== code && Zookeeper.ZNONODE !== code) {
+        return cb(iError.create('ZookeeperError', error));
+      }
+
+      if (!children || !children.length) {
+        return cb(null);
+      }
+
+      num += children.length;
+      error = null;
+
+      children.forEach(function (sub) {
+        sub = normalize(root + '/' + sub);
+        _list.push(sub);
+        _dump(sub, function (err) {
+          error = error || err;
+          if ((--num) === 0) {
+            cb(error);
+          }
+        });
+      });
+    });
+  };
+  _dump(normalize('/' + root), function (error) {
+    callback(error, _list.sort(function (a, b) {
+      return b.split('/').length - a.split('/').length;
+    }));
+  });
+};
+/* }}} */
+
+/* }}} */
+
 exports.create  = function (options) {
 
   /**
@@ -180,6 +220,35 @@ exports.create  = function (options) {
         });
       }, time);
     })(1 + Math.random() * (interval || 60000));
+  };
+  /* }}} */
+
+  /* {{{ public prototype remove() */
+  /**
+   * remove nodes by key
+   */
+  Storage.prototype.remove = function (key, callback) {
+    var _self = this;
+    if (!_handle) {
+      return _queues.push(function () {
+        _self.remove(key, callback);
+      });
+    }
+
+    getAllNodes(_handle, key, function (error, nodes) {
+      if (!nodes || !nodes.length) {
+        return callback(error, []);
+      }
+
+      var num = nodes.length;
+      nodes.forEach(function (path) {
+        _handle.a_delete_(path, -1, function (code, errmsg) {
+          if ((--num) === 0) {
+            callback(nodes);
+          }
+        });
+      });
+    });
   };
   /* }}} */
 
