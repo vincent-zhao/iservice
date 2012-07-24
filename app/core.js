@@ -2,6 +2,7 @@
 
 "use strict";
 
+var storage = require(__dirname + '/common/storage.js');
 var watcher = require(__dirname + '/common/watcher.js');
 
 /**

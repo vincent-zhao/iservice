@@ -104,6 +104,14 @@ exports.create  = function (options) {
   };
   Util.inherits(Storage, Emitter);
 
+  var After_Zookeeper_Connected = function (cb) {
+    if (!_handle) {
+      _queues.push(cb);
+    } else {
+      cb();
+    }
+  };
+
   /* {{{ public prototype get() */
   /**
    * Get value from storage by key
@@ -113,19 +121,15 @@ exports.create  = function (options) {
    * @param {Function} callback
    */
   Storage.prototype.get = function (key, callback) {
-    var _self = this;
-    if (!_handle) {
-      return _queues.push(function () {
-        _self.get(key, callback);
+    After_Zookeeper_Connected(function () {
+      _handle.a_get(normalize('/' + key), false, function (code, error, stat, data) {
+        if (Zookeeper.ZOK === code) {
+          error = null;
+        } else {
+          error = iError.create(Zookeeper.ZNONODE === code ? 'NotFound' : 'ZookeeperError', error);
+        }
+        callback && callback(error, data);
       });
-    }
-    _handle.a_get(normalize('/' + key), false, function (code, error, stat, data) {
-      if (Zookeeper.ZOK === code) {
-        error = null;
-      } else {
-        error = iError.create(Zookeeper.ZNONODE === code ? 'NotFound' : 'ZookeeperError', error);
-      }
-      callback && callback(error, data);
     });
   };
   /* }}} */
@@ -140,30 +144,25 @@ exports.create  = function (options) {
    * @param {Function} callback
    */
   Storage.prototype.set = function (key, data, callback) {
-    var _self = this;
-    if (!_handle) {
-      return _queues.push(function () {
-        _self.set(key, data, callback);
-      });
-    }
-
-    key = normalize('/' + key);
-    _handle.a_set(key, data, -1, function (code, error) {
-      if (Zookeeper.ZNONODE !== code) {
-        return callback((Zookeeper.ZOK === code) ? null : iError.create('UpdateError', error));
-      }
-
-      _handle.a_create(key, data, 0, function (code, error) {
+    After_Zookeeper_Connected(function () {
+      key = normalize('/' + key);
+      _handle.a_set(key, data, -1, function (code, error) {
         if (Zookeeper.ZNONODE !== code) {
-          return callback((Zookeeper.ZOK === code) ? null : iError.create('CreateError', error));
+          return callback((Zookeeper.ZOK === code) ? null : iError.create('UpdateError', error));
         }
 
-        _handle.mkdirp(key, function (error) {
-          if (error) {
-            callback(iError.create('CreateError', error));
-          } else {
-            _self.set(key, data, callback);
+        _handle.a_create(key, data, 0, function (code, error) {
+          if (Zookeeper.ZNONODE !== code) {
+            return callback((Zookeeper.ZOK === code) ? null : iError.create('CreateError', error));
           }
+
+          _handle.mkdirp(key, function (error) {
+            if (error) {
+              callback(iError.create('CreateError', error));
+            } else {
+              _self.set(key, data, callback);
+            }
+          });
         });
       });
     });
@@ -180,46 +179,41 @@ exports.create  = function (options) {
    */
   var _watchers = {};
   Storage.prototype.watch = function (key, interval, callback) {
-    var _self = this;
-    if (!_handle) {
-      return _queues.push(function () {
-        _self.watch(key, interval, callback);
-      });
-    }
-
-    key = normalize('/' + key);
-    var _check = function (next) {
-      _handle.a_get(key, false, function (code, error, stat, data) {
-        if (data && data !== _watchers[key]) {
-          if (!_watchers[key]) {
-            _watch();
+    After_Zookeeper_Connected(function () {
+      key = normalize('/' + key);
+      var _check = function (next) {
+        _handle.a_get(key, false, function (code, error, stat, data) {
+          if (data && data !== _watchers[key]) {
+            if (!_watchers[key]) {
+              _watch();
+            }
+            callback(data, _watchers[key]);
           }
-          callback(data, _watchers[key]);
-        }
 
-        if (Zookeeper.ZOK === code) {
-          _watchers[key] = data;
-        }
+          if (Zookeeper.ZOK === code) {
+            _watchers[key] = data;
+          }
 
-        next && next();
-      });
-    };
-
-    var _watch = function () {
-      _handle.aw_get(key, function (type, stat, path) {
-        _watch();
-        _check();
-      }, function () {});
-    };
-
-    _watch();
-    (function _loops(time) {
-      setTimeout(function () {
-        _check(function () {
-          _loops(interval || 60000);
+          next && next();
         });
-      }, time);
-    })(1 + Math.random() * (interval || 60000));
+      };
+
+      var _watch = function () {
+        _handle.aw_get(key, function (type, stat, path) {
+          _watch();
+          _check();
+        }, function () {});
+      };
+
+      _watch();
+      (function _loops(time) {
+        setTimeout(function () {
+          _check(function () {
+            _loops(interval || 60000);
+          });
+        }, time);
+      })(1 + Math.random() * (interval || 60000));
+    });
   };
   /* }}} */
 
@@ -228,24 +222,19 @@ exports.create  = function (options) {
    * remove nodes by key
    */
   Storage.prototype.remove = function (key, callback) {
-    var _self = this;
-    if (!_handle) {
-      return _queues.push(function () {
-        _self.remove(key, callback);
-      });
-    }
+    After_Zookeeper_Connected(function () {
+      getAllNodes(_handle, key, function (error, nodes) {
+        if (!nodes || !nodes.length) {
+          return callback(error, []);
+        }
 
-    getAllNodes(_handle, key, function (error, nodes) {
-      if (!nodes || !nodes.length) {
-        return callback(error, []);
-      }
-
-      var num = nodes.length;
-      nodes.forEach(function (path) {
-        _handle.a_delete_(path, -1, function (code, errmsg) {
-          if ((--num) === 0) {
-            callback(nodes);
-          }
+        var num = nodes.length;
+        nodes.forEach(function (path) {
+          _handle.a_delete_(path, -1, function (code, errmsg) {
+            if ((--num) === 0) {
+              callback(nodes);
+            }
+          });
         });
       });
     });
