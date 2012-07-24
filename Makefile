@@ -6,8 +6,8 @@ test:
 
 cov:
 	@npm install
-	-mv lib lib.bak && $(JSCOVERAGE) lib.bak lib 
+	-mv app app.bak && $(JSCOVERAGE) app.bak app 
 	-./node_modules/mocha/bin/mocha --reporter html-cov --timeout 2000 --ignore-leaks test/unit/*.js > ./coverage.html
-	-rm -rf lib && mv lib.bak lib
+	-rm -rf app && mv app.bak app
 
 .PHONY: test
