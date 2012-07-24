@@ -150,13 +150,11 @@ exports.create  = function (options) {
     key = normalize('/' + key);
     var _check = function (next) {
       _handle.a_get(key, false, function (code, error, stat, data) {
-        // XXX: NotFound => ...
-        if (!_watchers[key]) {
-          _watch();
-        }
-
         if (data && data !== _watchers[key]) {
-          callback(_watchers[key], data);
+          if (!_watchers[key]) {
+            _watch();
+          }
+          callback(data, _watchers[key]);
         }
 
         if (Zookeeper.ZOK === code) {
@@ -167,17 +165,25 @@ exports.create  = function (options) {
       });
     };
 
-    (function _watch() {
+    var _watch = function () {
       _handle.aw_get(key, function (type, stat, path) {
         _watch();
         _check();
-      }, function (code, error, stat, data) {
-        _watchers[key] = data;
-      });
-    })();
+      }, function () {});
+    };
+
+    _watch();
+    (function _loops(time) {
+      setTimeout(function () {
+        _check(function () {
+          _loops(interval || 60000);
+        });
+      }, time);
+    })(1 + Math.random() * (interval || 60000));
   };
   /* }}} */
 
   return new Storage();
+
 };
 
