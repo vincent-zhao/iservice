@@ -14,6 +14,12 @@ var __rest_watchers = {};
 
 var http = require('http').createServer(function (req, res) {
 
+  req.on('data', function (chunk) {
+  });
+
+  req.on('end', function () {
+  });
+
   var urls  = [];
   req.url.split('?').shift().split('/').forEach(function (item) {
     if ('' !== item) {
