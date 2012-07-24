@@ -58,11 +58,17 @@ describe('apply interface', function () {
     var tmp = res.dump();
     tmp.code.should.eql(200);
     tmp.data.should.eql('test');
-    tmp.info['x-app-expire'].should.eql(3231);
-    tmp.info['x-app-alefwe'].should.eql('213Acd  ');
+    tmp.info['x-expire'].should.eql(3231);
+    tmp.info['x-alefwe'].should.eql('213Acd  ');
 
     _me.finish('will be ignore', {});
     res.dump().should.eql(tmp);
+    done();
+  });
+  /* }}} */
+
+  /* {{{ should_apply_execute_works_fine() */
+  it('should_apply_execute_works_fine', function (done) {
     done();
   });
   /* }}} */

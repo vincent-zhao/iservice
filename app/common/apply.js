@@ -23,7 +23,7 @@ exports.create = function (res, url, data, info) {
 
     var header = {};
     for (var i in info) {
-      header['x-app-' + i] = info[i];
+      header['x-' + i] = info[i];
     }
 
     res.writeHead(code ? parseInt(code, 10) : 200, header);
@@ -33,7 +33,7 @@ exports.create = function (res, url, data, info) {
   /* }}} */
 
   /* {{{ public function execute() */
-  _me.execute = function () {
+  _me.execute = function (config) {
   };
   /* }}} */
 
