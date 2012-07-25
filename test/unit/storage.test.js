@@ -59,8 +59,13 @@ describe('storage with zookeeper test', function () {
     //    'root': 'unittest'
     });
 
-    _me.remove('/i/am', function (error) {
-      done();
+    _me.remove('/i/am', function (error, nodes) {
+      should.ok(!error);
+      _me.get('/i/am', function (error, data) {
+        error.should.have.property('name', 'NotFound');
+        should.ok(!data);
+        done();
+      });
     });
   });
 

@@ -22,6 +22,7 @@ var getAllNodes = function (zk, root, callback) {
         return cb(iError.create('ZookeeperError', error));
       }
 
+      _list.push(key);
       if (!children || !children.length) {
         return cb(null);
       }
@@ -30,9 +31,7 @@ var getAllNodes = function (zk, root, callback) {
       error = null;
 
       children.forEach(function (sub) {
-        sub = normalize(key + '/' + sub);
-        _list.push(sub);
-        _dump(sub, function (err) {
+        _dump(normalize(key + '/' + sub), function (err) {
           error = error || err;
           if ((--num) === 0) {
             cb(error);
@@ -233,7 +232,7 @@ exports.create  = function (options) {
         nodes.forEach(function (path) {
           _handle.a_delete_(path, -1, function (code, errmsg) {
             if ((--num) === 0) {
-              callback(nodes);
+              callback(null, nodes);
             }
           });
         });
