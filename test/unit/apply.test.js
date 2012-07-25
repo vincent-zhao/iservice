@@ -68,7 +68,7 @@ describe('apply interface', function () {
   /* }}} */
 
   /* {{{ should_apply_execute_works_fine() */
-  it('should_apply_execute_works_fine', function (done) {
+  it('should_apply_execute_works_fine', function () {
     var res = __response();
     var _me = apply.create(res, '/sdw324234234lk242342343424kslflwf;g', new Buffer('abcd'), {});
     _me.execute();
@@ -77,7 +77,27 @@ describe('apply interface', function () {
     tmp.code.should.eql(404);
     tmp.data.should.eql('');
 
-    done();
+    var _me = apply.create(res, '/test/error/this is a test error', new Buffer('abcd'), {});
+    _me.execute({
+      'root' : __dirname + '/fixtures',
+    });
+
+    var tmp = res.dump();
+    tmp.code.should.eql(500);
+    tmp.data.should.eql('this is a test error');
+
+    var _me = apply.create(res, '/test/data/lala', new Buffer('abcd'), {});
+    _me.execute({
+      'root' : __dirname + '/fixtures',
+    });
+
+    var tmp = res.dump();
+    tmp.code.should.eql(200);
+    tmp.data.should.eql('lala');
+
+    JSON.stringify(tmp.info).should.eql(JSON.stringify({
+      'x-hello' : 'world'
+    }));
   });
   /* }}} */
 
