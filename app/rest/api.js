@@ -2,30 +2,52 @@
 
 "use strict";
 
-var watcher = require(__dirname + '/../common/watcher.js');
-var storage = require(__dirname + '/../common/storage.js');
-
+/* {{{ function _getstorage() */
 /**
- * XXX: create storage
+ * @ 存储器列表
  */
+var __storages  = {};
+var _getstorage = function (url) {
+  var idx = '';
+  if (!__storages[idx]) {
+    __storages[idx] = require(__dirname + '/../common/storage.js').create(
+        // XXX: options
+        );
+  }
 
+  return __storages[idx];
+};
+/* }}} */
+
+/* {{{ function _getwatcher() */
 /**
  * @ 监视器列表
  */
 var __watchdogs = {};
+var _getwatcher = function (url) {
+  if (!__watchdogs[url]) {
+    __watchdogs[url] = require(__dirname + '/../common/watcher.js').create(
+        /**<    delay, recall   */
+        );
+  }
+
+  return __watchdogs[url];
+};
+/* }}} */
 
 /**
  * @ action列表
  */
-var Actions = {};
-Actions.get = function (url, callback) {
+var ACTIONS = {};
+ACTIONS.get = function (url, callback) {
 };
 
 exports.execute = function (req, callback) {
 
-  var action = req.url.shift().toLowerCase();
-  var prefix = req.url.shift();
+  var a = (req.url.shift() || 'status').toLowerCase();
+  console.log(a);
+  var u = req.url.shift();
 
-  callback(null, prefix);
+  callback(null, u);
 };
 
