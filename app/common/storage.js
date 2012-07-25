@@ -18,7 +18,12 @@ var getAllNodes = function (zk, root, callback) {
   var _dump = function (key, cb) {
     var num = 0;
     zk.a_get_children(key, false, function (code, error, children) {
-      if (Zookeeper.ZOK !== code && Zookeeper.ZNONODE !== code) {
+
+      if (Zookeeper.ZNONODE === code) {
+        return cb(iError.create('NotFound', error));
+      }
+
+      if (Zookeeper.ZOK !== code) {
         return cb(iError.create('ZookeeperError', error));
       }
 
