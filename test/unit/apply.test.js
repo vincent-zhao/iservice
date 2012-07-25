@@ -102,3 +102,18 @@ describe('apply interface', function () {
   /* }}} */
 
 });
+
+describe('rest ping', function () {
+
+  var resp  = __response();
+  var ctrol = require(__dirname + '/../../app/rest/ping.js');
+
+  it('should_ping_controller_works_fine', function (done) {
+    var req = apply.create(resp, '', '');
+    ctrol.execute(req, function (error, data) {
+      done();
+    });
+  });
+
+});
+
