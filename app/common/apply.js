@@ -2,7 +2,8 @@
 
 "use strict";
 
-var Url = require(__dirname + '/url.js');
+var Util = require('util');
+var Url  = require(__dirname + '/url.js');
 
 exports.create = function (res, url, data, info) {
 
@@ -34,6 +35,15 @@ exports.create = function (res, url, data, info) {
 
   /* {{{ public function execute() */
   _me.execute = function (config) {
+    var control = Util.format('%s/%s.js',
+        (config && config.root) || __dirname + '/../control', _me.url.shift() || 'index');
+    try {
+      require(control).execute(_me, function (error, data, info) {
+        _me.finish(data, info, error ? 500 : 200);
+      });
+    } catch (e) {
+      _me.finish('', {}, 404);
+    }
   };
   /* }}} */
 

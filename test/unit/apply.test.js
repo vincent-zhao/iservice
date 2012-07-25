@@ -69,6 +69,14 @@ describe('apply interface', function () {
 
   /* {{{ should_apply_execute_works_fine() */
   it('should_apply_execute_works_fine', function (done) {
+    var res = __response();
+    var _me = apply.create(res, '/sdw324234234lk242342343424kslflwf;g', new Buffer('abcd'), {});
+    _me.execute();
+
+    var tmp = res.dump();
+    tmp.code.should.eql(404);
+    tmp.data.should.eql('');
+
     done();
   });
   /* }}} */
