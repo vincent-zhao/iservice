@@ -13,19 +13,19 @@ var storage = require(__dirname + '/../common/storage.js');
  * @ 监视器列表
  */
 var __watchdogs = {};
+
+/**
+ * @ action列表
+ */
+var Actions = {}；
+Actions.get = function (url, callback) {
+};
+
 exports.execute = function (req, callback) {
 
-  switch (req.url.shift().toLowerCase()) {
+  var action = req.url.shift().toLowerCase();
+  var prefix = req.url.shift();
 
-    case 'get':
-      break;
-
-    case 'watch':
-      break;
-
-    default:
-      break;
-  }
-
+  callback(null, prefix);
 };
 

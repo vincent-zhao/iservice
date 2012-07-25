@@ -108,12 +108,31 @@ describe('rest ping', function () {
   var resp  = __response();
   var ctrol = require(__dirname + '/../../app/rest/ping.js');
 
+  /* {{{ should_ping_controller_works_fine() */
   it('should_ping_controller_works_fine', function (done) {
     var req = apply.create(resp, '', '');
     ctrol.execute(req, function (error, data) {
       done();
     });
   });
+  /* }}} */
+
+});
+
+describe('rest api', function () {
+
+  var resp  = __response();
+  var ctrol = require(__dirname + '/../../app/rest/api.js');
+
+  /* {{{ should_rest_api_works_fine() */
+  it('should_rest_api_works_fine', function (done) {
+    var req = apply.create(resp, '/get/test%2Fkey1', '');
+    ctrol.execute(req, function (error, data) {
+      console.log(data);
+      done();
+    });
+  });
+  /* }}} */
 
 });
 
