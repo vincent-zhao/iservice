@@ -163,5 +163,15 @@ describe('rest api', function () {
   });
   /* }}} */
 
+  /* {{{ should_rest_api_get_works_fine() */
+  it('should_rest_api_get_works_fine', function (done) {
+    var req = apply.create(resp, '/get/i_am_not_exists.' + process.pid, '');
+    ctrol.execute(req, function (error, data) {
+      error.should.have.property('name', 'NotFound');
+      done();
+    });
+  });
+  /* }}} */
+
 });
 

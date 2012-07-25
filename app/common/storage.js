@@ -30,7 +30,7 @@ var getAllNodes = function (zk, root, callback) {
       error = null;
 
       children.forEach(function (sub) {
-        sub = normalize(root + '/' + sub);
+        sub = normalize(key + '/' + sub);
         _list.push(sub);
         _dump(sub, function (err) {
           error = error || err;
@@ -144,6 +144,7 @@ exports.create  = function (options) {
    * @param {Function} callback
    */
   Storage.prototype.set = function (key, data, callback) {
+    var _self = this;
     After_Zookeeper_Connected(function () {
       key = normalize('/' + key);
       _handle.a_set(key, data, -1, function (code, error) {
