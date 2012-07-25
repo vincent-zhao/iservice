@@ -2,6 +2,9 @@
 
 "use strict";
 
+var Util    = require('util');
+var iError  = require(__dirname + '/../common/ierror.js');
+
 /* {{{ function _getstorage() */
 /**
  * @ 存储器列表
@@ -38,16 +41,37 @@ var _getwatcher = function (url) {
 /**
  * @ action列表
  */
-var ACTIONS = {};
-ACTIONS.get = function (url, callback) {
+var API = {};
+API.get = function (url, callback) {
+  _getstorage(url).get(url, function (error, data) {
+    callback(error, data);
+  });
+};
+
+API.watch = function (url, callback) {
+  var w = _getwatcher(url);
+  _getstorage(url).watch(url, 2000, function (curr, prev) {
+    w.emit(curr);
+  });
+
+  w.push(function (data) {
+    callback(null, data);
+  });
+};
+
+API.status = function (url, callback) {
+  callback(null, '<!--STATUS OK-->');
 };
 
 exports.execute = function (req, callback) {
 
   var a = (req.url.shift() || 'status').toLowerCase();
-  console.log(a);
   var u = req.url.shift();
 
-  callback(null, u);
+  if (!API[a] || 'function' !== (typeof API[a])) {
+    return callback(iError.create('NotFound', Util.format('Action "%s" not found.', a)));
+  }
+
+  (API[a])(u, callback);
 };
 

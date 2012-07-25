@@ -142,11 +142,22 @@ describe('rest api', function () {
   var resp  = __response();
   var ctrol = require(__dirname + '/../../app/rest/api.js');
 
-  /* {{{ should_rest_api_works_fine() */
-  it('should_rest_api_works_fine', function (done) {
-    var req = apply.create(resp, '/get/test%2Fkey1', '');
+  /* {{{ should_rest_api_notfound_works_fine() */
+  it('should_rest_api_notfound_works_fine', function (done) {
+    var req = apply.create(resp, '/i_am_a_not_found_action', '');
     ctrol.execute(req, function (error, data) {
-      console.log(data);
+      error.should.have.property('name', 'NotFound');
+      error.message.should.include('Action "i_am_a_not_found_action" not found.');
+      done();
+    });
+  });
+  /* }}} */
+
+  /* {{{ should_rest_api_status_works_fine() */
+  it('should_rest_api_status_works_fine', function (done) {
+    var req = apply.create(resp, '', '');
+    ctrol.execute(req, function (error, data) {
+      data.should.eql('<!--STATUS OK-->');
       done();
     });
   });
