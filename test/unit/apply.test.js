@@ -103,6 +103,24 @@ describe('apply interface', function () {
 
 });
 
+describe('rest index', function () {
+
+  var resp  = __response();
+  var ctrol = require(__dirname + '/../../app/rest/index.js');
+
+  /* {{{ should_index_controller_works_fine() */
+  it('should_index_controller_works_fine', function (done) {
+    var req = apply.create(resp, '', '');
+    ctrol.execute(req, function (error, data) {
+      should.ok(!error);
+      data.should.eql('<!--STATUS OK-->');
+      done();
+    });
+  });
+  /* }}} */
+
+});
+
 describe('rest ping', function () {
 
   var resp  = __response();

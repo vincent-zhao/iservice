@@ -17,7 +17,7 @@ var __watchdogs = {};
 /**
  * @ action列表
  */
-var Actions = {}；
+var Actions = {};
 Actions.get = function (url, callback) {
 };
 
