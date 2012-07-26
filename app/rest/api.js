@@ -48,6 +48,10 @@ API.get = function (url, callback) {
   });
 };
 
+API.status = function (url, callback) {
+  callback(null, '<!--STATUS OK-->');
+};
+
 API.watch = function (url, callback) {
   var w = _getwatcher(url);
   _getstorage(url).watch(url, 2000, function (curr, prev) {
@@ -57,10 +61,6 @@ API.watch = function (url, callback) {
   w.push(function (data) {
     callback(null, data);
   });
-};
-
-API.status = function (url, callback) {
-  callback(null, '<!--STATUS OK-->');
 };
 
 exports.execute = function (req, callback) {

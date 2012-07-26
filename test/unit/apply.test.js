@@ -58,8 +58,8 @@ describe('apply interface', function () {
     var tmp = res.dump();
     tmp.code.should.eql(200);
     tmp.data.should.eql('test');
-    tmp.info['x-expire'].should.eql(3231);
-    tmp.info['x-alefwe'].should.eql('213Acd  ');
+    tmp.info['x-app-expire'].should.eql(3231);
+    tmp.info['x-app-alefwe'].should.eql('213Acd  ');
 
     _me.finish('will be ignore', {});
     res.dump().should.eql(tmp);
@@ -96,7 +96,7 @@ describe('apply interface', function () {
     tmp.data.should.eql('lala');
 
     JSON.stringify(tmp.info).should.eql(JSON.stringify({
-      'x-hello' : 'world'
+      'x-app-hello' : 'world'
     }));
   });
   /* }}} */
