@@ -186,9 +186,8 @@ describe('rest api', function () {
   });
   /* }}} */
 
-  /* {{{ should_rest_api_watch_works_fine() */
-  it('should_rest_api_watch_works_fine', function (done) {
-    var num = 1;
+  /* {{{ should_rest_api_watch_timeout_works_fine() */
+  it('should_rest_api_watch_timeout_works_fine', function (done) {
     var req = apply.create(resp, '/watch/test%2Fkey2', '', {'timeout' : 10});
 
     var now = Date.now();
@@ -196,10 +195,35 @@ describe('rest api', function () {
       should.ok(!error);
       should.ok(!data);
       (Date.now() - now).should.below(20);
+      done();
+    });
+  });
+  /* }}} */
 
-      if ((--num) === 0) {
-        done();
-      }
+  /* {{{ should_rest_api_set_denied_from_other_client() */
+  it('should_rest_api_set_denied_from_other_client', function (done) {
+    var req = apply.create(resp, '/set/test%2Fkey1', process.pid, {'addr' : 'lalala'});
+    ctrol.execute(req, function (error, data) {
+      error.should.have.property('name', 'AccessDenied');
+      error.toString().should.include('Action "set" is not allowed from lalala');
+      done();
+    });
+  });
+  /* }}} */
+
+  /* {{{ should_rest_api_watch_update_works_fine() */
+  it('should_rest_api_watch_update_works_fine', function (done) {
+    var req = apply.create(resp, '/watch/test%2Fkey3', '', {'interval' : 100});
+    var now = Date.now();
+    ctrol.execute(req, function (error, data) {
+      should.ok(!error);
+      done();
+    });
+
+    var req = apply.create(resp, '/set/test%2Fkey3', process.pid, {'addr' : '127.0.0.1'});
+    ctrol.execute(req, function (error, data) {
+      should.ok(!error);
+      data.should.eql('');
     });
   });
   /* }}} */

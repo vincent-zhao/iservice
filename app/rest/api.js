@@ -52,6 +52,16 @@ API.get = function (req, callback) {
   });
 };
 
+API.set = function (req, callback) {
+  if ('127.0.0.1' !== req.info.addr) {
+    callback(iError.create('AccessDenied', 'Action "set" is not allowed from ' + req.info.addr));
+  } else {
+    _getstorage().set(req.url.shift(), req.data, function (error) {
+      callback(error, '');
+    });
+  }
+};
+
 API.watch = function (req, callback) {
   var u = req.url.shift();
   var w = _getwatcher(u);
@@ -67,9 +77,9 @@ API.watch = function (req, callback) {
   var t = setTimeout(function () {
     w.remove(i);
     callback(null, null);
-  }, req.info.timeout || 60000);
+  }, req.info.timeout || 300000);
 
-  _getstorage().watch(u, 2000, function (curr, prev) {
+  _getstorage().watch(u, req.info.interval || 3000, function (curr, prev) {
     w.emit(curr);
   });
 

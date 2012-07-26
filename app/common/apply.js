@@ -10,8 +10,8 @@ exports.create = function (res, url, data, info) {
   var _me   = {
     'time'  : Date.now(),
     'url'   : Url.create(url),
-    'data'  : data.toString(),
-    'info'  : info,
+    'data'  : (data || '').toString(),
+    'info'  : info || {},
   };
 
   var _done = false;
