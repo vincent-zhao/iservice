@@ -142,6 +142,16 @@ describe('rest api', function () {
   var resp  = __response();
   var ctrol = require(__dirname + '/../../app/rest/api.js');
 
+  /* {{{ should_rest_api_index_works_fine() */
+  it('should_rest_api_index_works_fine', function (done) {
+    var req = apply.create(resp, '', '');
+    ctrol.execute(req, function (error, data) {
+      data.should.eql('<!--STATUS OK-->');
+      done();
+    });
+  });
+  /* }}} */
+
   /* {{{ should_rest_api_notfound_works_fine() */
   it('should_rest_api_notfound_works_fine', function (done) {
     var req = apply.create(resp, '/i_am_a_not_found_action', '');
@@ -153,22 +163,43 @@ describe('rest api', function () {
   });
   /* }}} */
 
-  /* {{{ should_rest_api_status_works_fine() */
-  it('should_rest_api_status_works_fine', function (done) {
-    var req = apply.create(resp, '', '');
+  /* {{{ should_rest_api_get_works_fine() */
+  it('should_rest_api_get_works_fine', function (done) {
+
+    var num = 2;
+    var req = apply.create(resp, '/get/i_am_not_exists.' + process.pid, '');
     ctrol.execute(req, function (error, data) {
-      data.should.eql('<!--STATUS OK-->');
-      done();
+      error.should.have.property('name', 'NotFound');
+      if ((--num) === 0) {
+        done();
+      }
+    });
+
+    var req = apply.create(resp, '/get/%2F', '');
+    ctrol.execute(req, function (error, data) {
+      should.ok(!error);
+      should.ok(null !== data);
+      if ((--num) === 0) {
+        done();
+      }
     });
   });
   /* }}} */
 
-  /* {{{ should_rest_api_get_works_fine() */
-  it('should_rest_api_get_works_fine', function (done) {
-    var req = apply.create(resp, '/get/i_am_not_exists.' + process.pid, '');
+  /* {{{ should_rest_api_watch_works_fine() */
+  it('should_rest_api_watch_works_fine', function (done) {
+    var num = 1;
+    var req = apply.create(resp, '/watch/test%2Fkey2', '', {'timeout' : 10});
+
+    var now = Date.now();
     ctrol.execute(req, function (error, data) {
-      error.should.have.property('name', 'NotFound');
-      done();
+      should.ok(!error);
+      should.ok(!data);
+      (Date.now() - now).should.below(20);
+
+      if ((--num) === 0) {
+        done();
+      }
     });
   });
   /* }}} */

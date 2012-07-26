@@ -10,7 +10,7 @@ var iError  = require(__dirname + '/../common/ierror.js');
  * @ 存储器列表
  */
 var __storages  = {};
-var _getstorage = function (url) {
+var _getstorage = function () {
   var idx = '';
   if (!__storages[idx]) {
     __storages[idx] = require(__dirname + '/../common/storage.js').create(
@@ -42,36 +42,47 @@ var _getwatcher = function (url) {
  * @ action列表
  */
 var API = {};
-API.get = function (url, callback) {
-  _getstorage(url).get(url, function (error, data) {
+API.index   = function (req, callback) {
+  callback(null, '<!--STATUS OK-->');
+};
+
+API.get = function (req, callback) {
+  _getstorage().get(req.url.shift(), function (error, data) {
     callback(error, data);
   });
 };
 
-API.status = function (url, callback) {
-  callback(null, '<!--STATUS OK-->');
-};
+API.watch = function (req, callback) {
+  var u = req.url.shift();
+  var w = _getwatcher(u);
 
-API.watch = function (url, callback) {
-  var w = _getwatcher(url);
-  _getstorage(url).watch(url, 2000, function (curr, prev) {
+  var i = w.push(function (data) {
+    callback(null, data);
+    if (t) {
+      clearTimeout(t);
+      t = null;
+    }
+  });
+
+  var t = setTimeout(function () {
+    w.remove(i);
+    callback(null, null);
+  }, req.info.timeout || 60000);
+
+  _getstorage().watch(u, 2000, function (curr, prev) {
     w.emit(curr);
   });
 
-  w.push(function (data) {
-    callback(null, data);
-  });
 };
 
 exports.execute = function (req, callback) {
 
-  var a = (req.url.shift() || 'status').toLowerCase();
-  var u = req.url.shift();
+  var a = (req.url.shift() || 'index').toLowerCase();
 
   if (!API[a] || 'function' !== (typeof API[a])) {
     return callback(iError.create('NotFound', Util.format('Action "%s" not found.', a)));
   }
 
-  (API[a])(u, callback);
+  (API[a])(req, callback);
 };
 
