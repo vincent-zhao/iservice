@@ -46,12 +46,15 @@ API.index   = function (req, callback) {
   callback(null, '<!--STATUS OK-->');
 };
 
+/* {{{ action get() */
 API.get = function (req, callback) {
   _getstorage().get(req.url.shift(), function (error, data) {
     callback(error, data);
   });
 };
+/* }}} */
 
+/* {{{ action set() */
 API.set = function (req, callback) {
   if ('127.0.0.1' !== req.info.addr) {
     callback(iError.create('AccessDenied', 'Action "set" is not allowed from ' + req.info.addr));
@@ -61,7 +64,9 @@ API.set = function (req, callback) {
     });
   }
 };
+/* }}} */
 
+/* {{{ action watch() */
 API.watch = function (req, callback) {
   var u = req.url.shift();
   var w = _getwatcher(u);
@@ -84,15 +89,23 @@ API.watch = function (req, callback) {
   });
 
 };
+/* }}} */
+
+/* {{{ action listall() */
+API.listall = function (req, callback) {
+};
+/* }}} */
+
+/* {{{ action feedback() */
+API.feedback = function (req, callback) {
+};
+/* }}} */
 
 exports.execute = function (req, callback) {
-
   var a = (req.url.shift() || 'index').toLowerCase();
-
   if (!API[a] || 'function' !== (typeof API[a])) {
     return callback(iError.create('NotFound', Util.format('Action "%s" not found.', a)));
   }
-
   (API[a])(req, callback);
 };
 
