@@ -2,7 +2,8 @@
 
 "use strict";
 
-var Apply = require(__dirname + '/common/apply.js');
+var Apply  = require(__dirname + '/common/apply.js');
+var Concat = require('shark').extend.concat;
 var http = require('http').createServer(function (req, res) {
 
   /**
@@ -26,11 +27,13 @@ var http = require('http').createServer(function (req, res) {
 
   _info.ipaddr = _addr;
 
+  var idata = Concat();
   req.on('data', function (data) {
+    idata.push(data);
   });
 
   req.on('end', function () {
-    Apply.create(res, req.url, new Buffer('aa'), _info).execute({
+    Apply.create(res, req.url, idata.all(), _info).execute({
       'root' : __dirname + '/rest',
     });
   });

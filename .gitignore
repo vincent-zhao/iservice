@@ -1,7 +1,9 @@
+bin
 node_modules
 coverage.html
 *.pid
 *.log
 *.swp
+*.properties
 run
 log
