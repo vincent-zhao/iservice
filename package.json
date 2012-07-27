@@ -9,7 +9,7 @@
     "keywords": [ "zookeeper", "config server", "service" ],
     "dependencies": {
       "pm"      : "=0.9.1",
-      "shark"   : "=0.2.0",
+      "shark"   : "=0.3.0",
       "zookeeper"   : "3.4.1-4"
     },
     "engines": {

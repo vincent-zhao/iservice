@@ -57,13 +57,13 @@ var task_make_test = function () {
 var task_make_bin = function () {
   _me.makedir('bin');
   _me.makedir(_me.$('log.root'));
-  _me.makeconf('build/script/appctl.sh',   'bin/appctl', {
-    'app.name'        : 'shark',
+  _me.makeconf('node_modules/shark/resource/script/appctl.sh',   'bin/appctl', {
+    'app.name'        : 'iservice',
     'nodejs.bin'      : _me.$('nodejs.bin', '/usr/local/bin/node'),
   });
   Builder.setmode('bin/appctl', 0755);
 
-  _me.makeconf('build/script/logrotate.sh',   'bin/logrotate');
+  _me.makeconf('node_modules/shark/resource/script/logrotate.sh',   'bin/logrotate');
   Builder.setmode('bin/logrotate', 0755);
 };
 /* }}} */
