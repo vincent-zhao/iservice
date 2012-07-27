@@ -39,7 +39,7 @@ exports.create = function (res, url, data, info) {
         (config && config.root) || __dirname + '/../control', _me.url.shift() || 'index');
     try {
       require(control).execute(_me, function (error, data, info) {
-        _me.finish(data || error.message, info, error ? 500 : 200);
+        _me.finish(data, info, 200);
       });
     } catch (e) {
       _me.finish('', {}, 404);

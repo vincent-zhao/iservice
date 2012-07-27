@@ -83,8 +83,8 @@ describe('apply interface', function () {
     });
 
     var tmp = res.dump();
-    tmp.code.should.eql(500);
-    tmp.data.should.eql('this is a test error');
+    tmp.code.should.eql(200);
+    tmp.data.should.eql('');
 
     var _me = apply.create(res, '/test/data/lala', new Buffer('abcd'), {});
     _me.execute({
