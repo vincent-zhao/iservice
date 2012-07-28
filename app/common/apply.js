@@ -28,7 +28,7 @@ exports.create = function (res, url, data, info) {
     }
 
     res.writeHead(code ? parseInt(code, 10) : 200, header);
-    res.end(data);
+    res.end(data.toString());
     _done = true;
   };
   /* }}} */
