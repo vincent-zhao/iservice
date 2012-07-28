@@ -170,24 +170,19 @@ describe('rest api', function () {
   /* {{{ should_rest_api_get_works_fine() */
   it('should_rest_api_get_works_fine', function (done) {
 
-    var num = 2;
     var req = apply.create(resp, '/get/i_am_not_exists.' + process.pid, '');
     ctrol.execute(req, function (error, data) {
       should.ok(!error);
       (JSON.parse(data)).error.should.have.property('name', 'NotFound');
-      if ((--num) === 0) {
+
+      var req = apply.create(resp, '/get/%2F', '');
+      ctrol.execute(req, function (error, data) {
+        should.ok(!error);
+        should.ok(null !== data);
         done();
-      }
+      });
     });
 
-    var req = apply.create(resp, '/get/%2F', '');
-    ctrol.execute(req, function (error, data) {
-      should.ok(!error);
-      should.ok(null !== data);
-      if ((--num) === 0) {
-        done();
-      }
-    });
   });
   /* }}} */
 

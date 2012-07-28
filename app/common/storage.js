@@ -132,7 +132,9 @@ exports.create  = function (options) {
         } else {
           error = iError.create(Zookeeper.ZNONODE === code ? 'NotFound' : 'ZookeeperError', error);
         }
-        callback && callback(error, data);
+        if (callback) {
+          callback(error, data);
+        }
       });
     });
   };
