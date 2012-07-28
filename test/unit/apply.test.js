@@ -84,7 +84,7 @@ describe('apply interface', function () {
 
     var tmp = res.dump();
     tmp.code.should.eql(500);
-    tmp.data.should.eql('this is a test error');
+    tmp.data.should.include('this is a test error');
 
     var _me = apply.create(res, '/test/data/lala', new Buffer('abcd'), {});
     _me.execute({
@@ -146,7 +146,11 @@ describe('rest api', function () {
   it('should_rest_api_index_works_fine', function (done) {
     var req = apply.create(resp, '', '');
     ctrol.execute(req, function (error, data) {
-      data.should.eql('<!--STATUS OK-->');
+      should.ok(!error);
+      data.should.eql(JSON.stringify({
+        'error' : null,
+        'data'  : '<!--STATUS OK-->',
+      }));
       done();
     });
   });
@@ -169,7 +173,8 @@ describe('rest api', function () {
     var num = 2;
     var req = apply.create(resp, '/get/i_am_not_exists.' + process.pid, '');
     ctrol.execute(req, function (error, data) {
-      error.should.have.property('name', 'NotFound');
+      should.ok(!error);
+      (JSON.parse(data)).error.should.have.property('name', 'NotFound');
       if ((--num) === 0) {
         done();
       }
@@ -193,7 +198,6 @@ describe('rest api', function () {
     var now = Date.now();
     ctrol.execute(req, function (error, data) {
       should.ok(!error);
-      should.ok(!data);
       (Date.now() - now).should.below(20);
       done();
     });
@@ -204,8 +208,9 @@ describe('rest api', function () {
   it('should_rest_api_set_denied_from_other_client', function (done) {
     var req = apply.create(resp, '/set/test%2Fkey1', process.pid, {'addr' : 'lalala'});
     ctrol.execute(req, function (error, data) {
-      error.should.have.property('name', 'AccessDenied');
-      error.toString().should.include('Action "set" is not allowed from lalala');
+      should.ok(!error);
+      data  = JSON.parse(data);
+      data.error.should.have.property('name', 'AccessDenied');
       done();
     });
   });
@@ -223,7 +228,10 @@ describe('rest api', function () {
     var req = apply.create(resp, '/set/test%2Fkey3', process.pid, {'addr' : '127.0.0.1'});
     ctrol.execute(req, function (error, data) {
       should.ok(!error);
-      data.should.eql('');
+      data.should.eql(JSON.stringify({
+        'error' : null,
+        'data'  : '',
+      }));
     });
   });
   /* }}} */
