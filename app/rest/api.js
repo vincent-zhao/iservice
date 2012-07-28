@@ -91,8 +91,8 @@ API.watch = function (req, callback) {
 };
 /* }}} */
 
-/* {{{ action listall() */
-API.listall = function (req, callback) {
+/* {{{ action tree() */
+API.tree = function (req, callback) {
 };
 /* }}} */
 
@@ -104,8 +104,13 @@ API.feedback = function (req, callback) {
 exports.execute = function (req, callback) {
   var a = (req.url.shift() || 'index').toLowerCase();
   if (!API[a] || 'function' !== (typeof API[a])) {
-    return callback(iError.create('NotFound', Util.format('Action "%s" not found.', a)));
+    return callback(iError.create('ActionNotFound', Util.format('Action "%s" not found.', a)));
   }
-  (API[a])(req, callback);
+  (API[a])(req, function (error, data) {
+    callback(null, JSON.stringify({
+      'error'   : error,
+      'data'    : data,
+    }));
+  });
 };
 

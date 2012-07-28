@@ -83,8 +83,8 @@ describe('apply interface', function () {
     });
 
     var tmp = res.dump();
-    tmp.code.should.eql(200);
-    tmp.data.should.eql('');
+    tmp.code.should.eql(500);
+    tmp.data.should.eql('this is a test error');
 
     var _me = apply.create(res, '/test/data/lala', new Buffer('abcd'), {});
     _me.execute({
@@ -156,7 +156,7 @@ describe('rest api', function () {
   it('should_rest_api_notfound_works_fine', function (done) {
     var req = apply.create(resp, '/i_am_a_not_found_action', '');
     ctrol.execute(req, function (error, data) {
-      error.should.have.property('name', 'NotFound');
+      error.should.have.property('name', 'ActionNotFound');
       error.message.should.include('Action "i_am_a_not_found_action" not found.');
       done();
     });
