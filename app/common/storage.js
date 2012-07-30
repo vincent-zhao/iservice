@@ -224,6 +224,28 @@ exports.create  = function (options) {
   };
   /* }}} */
 
+  /* {{{ public prototype tree() */
+  Storage.prototype.tree = function (key, callback) {
+    After_Zookeeper_Connected(function () {
+      getAllNodes(_handle, key, function (error, nodes) {
+        var map = {};
+        if (!nodes || !nodes.length) {
+          return callback(error, map);
+        }
+
+        var num = nodes.length;
+        nodes.forEach(function (path) {
+          _handle.a_delete_(path, -1, function (code, errmsg) {
+            if ((--num) === 0) {
+              callback(null, nodes);
+            }
+          });
+        });
+      });
+    });
+  };
+  /* }}} */
+
   /* {{{ public prototype remove() */
   /**
    * remove nodes by key
