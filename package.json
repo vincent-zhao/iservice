@@ -10,7 +10,7 @@
     "dependencies": {
       "eventproxy"  : "0.1.1",
       "pm"          : "=0.9.1",
-      "shark"       : "=0.3.0",
+      "shark"       : "=0.3.1",
       "zookeeper"   : "3.4.1-4"
     },
     "engines": {

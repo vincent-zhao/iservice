@@ -3,6 +3,7 @@
 "use strict";
 
 var Emitter = require('events').EventEmitter;
+var Events  = require('shark').events;
 var iError  = require(__dirname + '/ierror.js');
 var Util = require('util');
 var Zookeeper = require('zookeeper');
@@ -233,12 +234,13 @@ exports.create  = function (options) {
           return callback(error, map);
         }
 
-        var num = nodes.length;
+        var evt = Events(function (error) {
+          callback(error, map);
+        });
+
         nodes.forEach(function (path) {
-          _handle.a_delete_(path, -1, function (code, errmsg) {
-            if ((--num) === 0) {
-              callback(null, nodes);
-            }
+          evt.wait(path, function () {
+            evt.emit(path);
           });
         });
       });
