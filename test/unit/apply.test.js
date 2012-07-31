@@ -231,5 +231,16 @@ describe('rest api', function () {
   });
   /* }}} */
 
+  /* {{{ should_rest_api_tree_works_fine() */
+  it('should_rest_api_tree_works_fine', function (done) {
+    var req = apply.create(resp, '/tree/test', '');
+    ctrol.execute(req, function (error, data) {
+      should.ok(!error);
+      (JSON.parse(data)).should.have.property('error', null);
+      done();
+    });
+  });
+  /* }}} */
+
 });
 

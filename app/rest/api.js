@@ -93,6 +93,9 @@ API.watch = function (req, callback) {
 
 /* {{{ action tree() */
 API.tree = function (req, callback) {
+  _getstorage().tree(req.url.shift(), function (error, data) {
+    callback(error, data);
+  });
 };
 /* }}} */
 
