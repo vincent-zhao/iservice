@@ -74,7 +74,6 @@ describe('storage with zookeeper test', function () {
     });
     _me.tree('/test', function (error, data) {
       should.ok(!error);
-      console.log(data);
       done();
     });
   });
