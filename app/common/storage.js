@@ -12,6 +12,17 @@ var normalize = function (key) {
   return key.replace(/\/{2,}/g, '/').trim();
 };
 
+var buildmeta = function (stat) {
+  if (!stat) {
+    return;
+  }
+
+  return {
+    'v' : stat.version || 0,
+    't' : stat.mtime.getTime() || stat.ctime.getTime(),
+  };
+};
+
 exports.create  = function (options) {
 
   /**
@@ -75,6 +86,7 @@ exports.create  = function (options) {
   };
   /* }}} */
 
+  /* {{{ private function getAllNodes() */
   var getAllNodes = function (root, callback) {
     After_Zookeeper_Connected(function () {
       var _list = [];
@@ -114,6 +126,7 @@ exports.create  = function (options) {
       });
     });
   };
+  /* }}} */
 
   /* {{{ public prototype get() */
   /**
@@ -132,7 +145,7 @@ exports.create  = function (options) {
           error = iError.create(Zookeeper.ZNONODE === code ? 'NotFound' : 'ZookeeperError', error);
         }
         if (callback) {
-          callback(error, data);
+          callback(error, data, buildmeta(stat));
         }
       });
     });
@@ -239,7 +252,7 @@ exports.create  = function (options) {
         evt.wait(path, function () {
           _handle.a_get(path, false, function (code, error, stat, data) {
             if (Zookeeper.ZOK === code) {
-              map[path] = data;
+              map[path] = {'data'  : data, 'meta'  : buildmeta(stat)};
             }
             evt.emit(path);
           });
