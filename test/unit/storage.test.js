@@ -51,6 +51,7 @@ describe('storage with zookeeper test', function () {
   });
   /* }}} */
 
+  /* {{{ should_zookeeper_remove_works_fine() */
   it('should_zookeeper_remove_works_fine', function (done) {
     var _me = storage.create({
       'hosts' : 'localhost:2181',
@@ -64,5 +65,19 @@ describe('storage with zookeeper test', function () {
       });
     });
   });
+  /* }}} */
+
+  /* {{{ should_zookeeper_tree_works_fine() */
+  it('should_zookeeper_tree_works_fine', function (done) {
+    var _me = storage.create({
+      'hosts' : 'localhost:2181',
+    });
+    _me.tree('/test', function (error, data) {
+      should.ok(!error);
+      console.log(data);
+      done();
+    });
+  });
+  /* }}} */
 
 });
