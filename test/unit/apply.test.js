@@ -188,12 +188,12 @@ describe('rest api', function () {
 
   /* {{{ should_rest_api_watch_timeout_works_fine() */
   it('should_rest_api_watch_timeout_works_fine', function (done) {
-    var req = apply.create(resp, '/watch/test%2Fkey2', '', {'timeout' : 10});
+    var req = apply.create(resp, '/watch/test%2Fkey2', '', {'tmout' : 100});
 
     var now = Date.now();
     ctrol.execute(req, function (error, data) {
       should.ok(!error);
-      (Date.now() - now).should.below(20);
+      (Date.now() - now).should.below(110);
       done();
     });
   });

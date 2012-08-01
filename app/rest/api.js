@@ -82,7 +82,7 @@ API.watch = function (req, callback) {
   var t = setTimeout(function () {
     w.remove(i);
     callback(null, null);
-  }, req.info.timeout || 300000);
+  }, req.info.tmout || 60000);
 
   _getstorage().watch(u, req.info.interval || 3000, function (curr, prev) {
     w.emit(curr);
