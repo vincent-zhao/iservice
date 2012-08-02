@@ -4,7 +4,7 @@ var os = require('os'), path = require('path');
 
 var Builder = require('shark').build;
 
-var Home    = __dirname + '/../';
+var Home    = __dirname + '/..';
 
 /**
  * @强制参数 
@@ -34,11 +34,11 @@ process.argv.slice(2).forEach(function (arg) {
 });
 /* }}} */
 
-var _props  = path.normalize(Home + 'default-' + os.hostname() + '-' + os.arch() + '.properties');
+var _props  = path.normalize(Home + '/default-' + os.hostname() + '-' + os.arch() + '.properties');
 if (!path.existsSync(_props) || 1) {
   Builder.init(null, Home, {
     'dir.root'      : Home,
-    'log.root'      : Home + 'log/',
+    'log.root'      : Home + '/log/',
   }).makeconf('build/tpl/default.properties', _props);
 }
 
@@ -59,9 +59,10 @@ var task_make_bin = function () {
   _me.makedir(_me.$('log.root'));
   _me.makeconf('node_modules/shark/resource/script/appctl.sh',   'bin/appctl', {
     'app.name'      : 'iservice',
-    'pid.file'      : Home + '/run/iservice.pid',
-    'status.taobao' : Home + '/run/status.taobao',
-    'properties'    : _props,
+    'pid.file'      : _me.$('pid.file', Home + '/run/iservice.pid'),
+    '200.file'      : _me.$('200.file', Home + '/run/status.taobao'),
+    'properties'    : _me.$('propfile', _props),
+    'node.bin'      : _me.$('node.bin', '/opt/taobao/install/node.js/bin/node'),
   });
   Builder.setmode('bin/appctl', 0755);
 
