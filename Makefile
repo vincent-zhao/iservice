@@ -10,4 +10,11 @@ cov:
 	-./node_modules/mocha/bin/mocha --reporter html-cov --timeout 2000 --ignore-leaks test/unit/*.js > ./coverage.html
 	-rm -rf app && mv app.bak app
 
+func:
+	@npm install
+	@node ./build/makeconf.js
+	./bin/appctl restart
+	@-./node_modules/mocha/bin/mocha --reporter spec --timeout 6000 test/func/*.js
+	./bin/appctl stop
+
 .PHONY: test
