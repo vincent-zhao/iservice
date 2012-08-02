@@ -1,10 +1,10 @@
 /* vim: set expandtab tabstop=2 shiftwidth=2 foldmethod=marker: */
 
 var Master  = require('pm').createMaster({
-  'pidfile'    : __dirname + '/../run/iservice.pid',
+  'pidfile'    : __dirname + '/run/iservice.pid',
 });
 
-Master.register('api',   __dirname + '/core.js', {
+Master.register('api',   __dirname + '/app/core.js', {
   'listen'  : [ 33749 ],
   'children': 1,
 });
