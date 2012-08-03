@@ -13,7 +13,7 @@ if (!Path.existsSync(_props)) {
   process.exit(1);
 }
 
-Builder.init(_props, Home).makeconf('build/tpl', 'etc', {
+Builder.init(_props, Home).makeconf('build/tpl', 'etc/', {
   'dir.root' : Home,
 });
 
@@ -26,12 +26,10 @@ app.on('giveup', function (group, fatals) {
   console.log('Master giveup to restart %s process after %d times.', group, fatals);
 });
 
-var options = cfg.all();
-for (var i in options) {
-  var m = i.match(/worker:(\w+)/);
-  var c = options[i];
-  if (m && c.script) {
-    app.register(m[1], c.script, c);
+var workers = cfg.find('worker');
+for (var group in workers) {
+  if (group && workers[group].script) {
+    app.register(group, workers[group].script, workers[group]);
   }
 }
 

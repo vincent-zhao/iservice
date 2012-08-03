@@ -8,8 +8,8 @@
     "description": "A high speed file splitor on Node.js",
     "keywords": [ "zookeeper", "config server", "service" ],
     "dependencies": {
-      "pm"          : "=1.0.3",
-      "shark"       : "=0.3.5",
+      "pm"          : "=1.0.4",
+      "shark"       : "=0.3.6",
       "zookeeper"   : "3.4.1-4"
     },
     "engines": {
