@@ -60,7 +60,7 @@ var task_make_bin = function () {
   _me.makeconf('node_modules/shark/resource/script/appctl.sh',   'bin/appctl', {
     'app.name'      : 'iservice',
     'pid.file'      : _me.$('pid.file', Home + '/run/iservice.pid'),
-    '200.file'      : _me.$('200.file', Home + '/run/status.taobao'),
+    '200.file'      : _me.$('200.file', ''),
     'properties'    : _me.$('propfile', _props),
     'node.bin'      : _me.$('node.bin', '/opt/taobao/install/node.js/bin/node'),
   });
