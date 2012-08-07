@@ -38,7 +38,7 @@ var _props  = path.normalize(Home + '/default-' + os.hostname() + '-' + os.arch(
 if (!path.existsSync(_props) || 1) {
   Builder.init(null, Home, {
     'dir.root'      : Home,
-    'log.root'      : Home + '/log/',
+    'log.root'      : path.normalize(Home + '/log'),
   }).makeconf('build/tpl/default.properties', _props);
 }
 
