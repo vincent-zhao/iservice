@@ -19,6 +19,7 @@
       "should"        : ">=0.4.2",
       "mocha"         : ">=0.9.0",
       "iservice-client" : ">=0.0.1",
+      "urllib"          : ">=0.2.6",
       "visionmedia-jscoverage" : ">=1.0.0"
     },
     "main"  : "./index.js",
