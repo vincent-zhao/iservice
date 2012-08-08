@@ -19,10 +19,7 @@ exports.create = function (options) {
     _options[i] = options[i];
   }
 
-  /**
-   * @ 处理函数
-   */
-  var _handle   = function (req, res) {
+  return Http.createServer(function (req, res) {
 
     /**
      * @ 控制信息
@@ -54,6 +51,6 @@ exports.create = function (options) {
         'root' : _options.control_root,
       });
     });
-  };
+  });
 
 };
