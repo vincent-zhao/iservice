@@ -2,11 +2,12 @@
 
 "use strict";
 
+var factory = require('shark').factory;
 var fs = require('fs');
 
 exports.execute = function (req, callback) {
-  // XXX: Factory.getConfig().get('status.taobao.file');
-  fs.readFile('/etc/password', function (error, data) {
+  var fname = factory.getConfig('rest').get('statusfile', __dirname + '/../../public/status');
+  fs.readFile(fname, function (error, data) {
     callback(error, data);
   });
 };

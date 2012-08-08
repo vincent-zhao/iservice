@@ -126,6 +126,11 @@ describe('rest ping', function () {
   var resp  = __response();
   var ctrol = require(__dirname + '/../../app/rest/ping.js');
 
+  beforeEach(function () {
+    require('shark').factory.setConfig('rest', {
+    });
+  });
+
   /* {{{ should_ping_controller_works_fine() */
   it('should_ping_controller_works_fine', function (done) {
     var req = apply.create(resp, '', '');
