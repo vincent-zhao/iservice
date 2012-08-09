@@ -83,7 +83,7 @@ describe('apply interface', function () {
     });
 
     var tmp = res.dump();
-    tmp.code.should.eql(500);
+    tmp.code.should.eql(200);
     tmp.data.should.include('this is a test error');
 
     var _me = apply.create(res, '/test/data/lala', new Buffer('abcd'), {});
@@ -123,19 +123,34 @@ describe('rest index', function () {
 
 describe('rest ping', function () {
 
+  var fs = require('fs');
+
+  var fname = __dirname + '/tmp/status';
   var resp  = __response();
   var ctrol = require(__dirname + '/../../app/rest/ping.js');
 
   beforeEach(function () {
-    require('shark').factory.setConfig('rest', {
-    });
+    require('shark').factory.setConfig('rest', __dirname + '/etc/rest.ini');
   });
 
   /* {{{ should_ping_controller_works_fine() */
   it('should_ping_controller_works_fine', function (done) {
     var req = apply.create(resp, '', '');
-    ctrol.execute(req, function (error, data) {
-      done();
+
+    fs.unlink(fname, function (error) {
+      should.ok((!error) || 'ENOENT' === error.code);
+      ctrol.execute(req, function (error, data) {
+        should.ok(!error);
+        data.toString().should.include('ENOENT');
+        fs.writeFile(fname, 'a', function (error) {
+          should.ok(!error);
+          ctrol.execute(req, function (error, data) {
+            should.ok(!error);
+            data.toString().should.eql('a');
+            done();
+          });
+        });
+      });
     });
   });
   /* }}} */

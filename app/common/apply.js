@@ -38,8 +38,8 @@ exports.create = function (res, url, data, info) {
     var control = Util.format('%s/%s.js',
         (config && config.root) || __dirname + '/../control', _me.url.shift() || 'index');
     try {
-      require(control).execute(_me, function (error, data, info) {
-        _me.finish(data || error, info, error ? 500 : 200);
+      require(control).execute(_me, function (error, data, info, code) {
+        _me.finish(data || error, info, code || 200);
       });
     } catch (e) {
       _me.finish('', {}, 404);

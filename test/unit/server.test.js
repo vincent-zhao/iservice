@@ -25,7 +25,7 @@ describe('http server', function () {
     'x-real-ip'   : '1.1.1.2',
     }
     };
-    urllib.request('http:/' + '/localhost:33751/default/hello', req, function (error, data) {
+    urllib.request('http:/' + '/localhost:33751/default/hello/aa/bb', req, function (error, data) {
       should.ok(!error);
       data  = JSON.parse(data.toString());
       data.should.have.keys('time', 'url', 'data', 'info');
