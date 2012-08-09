@@ -25,7 +25,7 @@ function fileset(dir, callback) {
 /* }}} */
 
 fileset(__dirname + '/../../app', function(fname) {
-  if (/\.js$/.test(fname) && !(/\/(master|core)\.js$/.test(fname))) {
+  if (/\.js$/.test(fname) && !(/\/(rest)\.js$/.test(fname))) {
     require(fname);
   }
 });
