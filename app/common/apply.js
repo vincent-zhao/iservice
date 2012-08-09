@@ -16,6 +16,13 @@ exports.create = function (res, url, data, info) {
 
   var _done = false;
 
+  var _ERRORLOG = function (error) {
+    require('shark').factory.getLog('error').exception(error, {
+      'URL' : url,
+      'POST': data,
+    });
+  };
+
   /* {{{ public function finish() */
   _me.finish = function (data, info, code) {
     if (_done) {
@@ -40,9 +47,13 @@ exports.create = function (res, url, data, info) {
     try {
       require(control).execute(_me, function (error, data, info, code) {
         _me.finish(data || error, info, code || 200);
+        if (error) {
+          _ERRORLOG(e);
+        }
       });
     } catch (e) {
       _me.finish('', {}, 404);
+      _ERRORLOG(e);
     }
   };
   /* }}} */

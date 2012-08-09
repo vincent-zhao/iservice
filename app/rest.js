@@ -28,3 +28,7 @@ require('pm').createWorker().ready(function (socket) {
   server.emit('connection', socket);
 });
 
+process.on('uncaughtException', function (e) {
+  Factory.getLog('error').exception(e);
+  process.exit(0);
+});

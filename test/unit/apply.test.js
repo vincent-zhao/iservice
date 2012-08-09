@@ -31,6 +31,10 @@ function __response() {
 }
 /* }}} */
 
+beforeEach(function () {
+  require('shark').factory.cleanAll();
+});
+
 describe('apply interface', function () {
 
   /* {{{ should_apply_create_and_finish_works_fine() */
