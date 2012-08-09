@@ -30,7 +30,7 @@ exports.create  = function (options) {
    */
   /* {{{ */
   var _options  = {
-    'hosts' : 'localhost:2181',
+    'host'  : 'localhost:2181',
     'root'  : '/',
     'user'  : '',
     'pass'  : ''
@@ -53,7 +53,7 @@ exports.create  = function (options) {
   /* {{{ connect to zookeeper */
 
   var _conn = {
-    'connect' : normalize(Util.format('%s/%s', _options.hosts, _options.root)),
+    'connect' : normalize(Util.format('%s/%s', _options.host, _options.root)),
     'timeout' : 300000,
     'debug_level' : Zookeeper.ZOO_LOG_LEVEL_WARN,
     'host_order_deterministic' : false

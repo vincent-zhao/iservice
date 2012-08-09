@@ -39,6 +39,11 @@ if (!path.existsSync(_props) || 1) {
   Builder.init(null, Home, {
     'dir.root'      : Home,
     'log.root'      : path.normalize(Home + '/log'),
+
+    'zookeeper.main.host' : 'localhost:2181,127.0.0.1:2181',
+    'zookeeper.main.root' : '/',
+    'zookeeper.main.user' : 'anonymouse',
+    'zookeeper.main.pass' : '123456',
   }).makeconf('build/tpl/default.properties', _props);
 }
 

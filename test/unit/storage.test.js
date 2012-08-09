@@ -8,7 +8,7 @@ describe('storage with zookeeper test', function () {
   /* {{{ should_zookeeper_set_and_get_works_fine() */
   it('should_zookeeper_set_and_get_works_fine', function (done) {
     var _me = storage.create({
-      'hosts' : 'localhost:2181',
+      'host' : 'localhost:2181',
     });
 
     _me.get('/i/am/not/exists/' + process.pid, function (error, data) {
@@ -30,7 +30,7 @@ describe('storage with zookeeper test', function () {
   /* {{{ should_zookeeper_watch_works_fine() */
   it('should_zookeeper_watch_works_fine', function (done) {
     var _me = storage.create({
-      'hosts' : 'localhost:2181',
+      'host' : 'localhost:2181',
     });
 
     var res = [];
@@ -54,7 +54,7 @@ describe('storage with zookeeper test', function () {
   /* {{{ should_zookeeper_remove_works_fine() */
   it('should_zookeeper_remove_works_fine', function (done) {
     var _me = storage.create({
-      'hosts' : 'localhost:2181',
+      'host' : 'localhost:2181',
     });
 
     _me.remove('/i/am', function (error, nodes) {
@@ -70,7 +70,7 @@ describe('storage with zookeeper test', function () {
   /* {{{ should_zookeeper_tree_works_fine() */
   it('should_zookeeper_tree_works_fine', function (done) {
     var _me = storage.create({
-      'hosts' : 'localhost:2181',
+      'host' : 'localhost:2181',
     });
     _me.tree('/test', function (error, data) {
       should.ok(!error);
