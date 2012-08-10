@@ -30,5 +30,5 @@ require('pm').createWorker().ready(function (socket) {
 
 process.on('uncaughtException', function (e) {
   Factory.getLog('error').exception(e);
-  process.exit(0);
+  process.exit(1);
 });
