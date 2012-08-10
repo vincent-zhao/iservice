@@ -9,7 +9,7 @@ var Home    = __dirname + '/..';
 /**
  * @强制参数 
  */
-var _force  = {};
+var _force  = Builder.parseProperties(Home + '/_private.properties');
 
 /* {{{ process argv parse */
 
@@ -40,10 +40,18 @@ if (!path.existsSync(_props) || 1) {
     'dir.root'      : Home,
     'log.root'      : path.normalize(Home + '/log'),
 
-    'zookeeper.main.host' : 'localhost:2181,127.0.0.1:2181',
-    'zookeeper.main.root' : '/',
-    'zookeeper.main.user' : 'anonymouse',
-    'zookeeper.main.pass' : '123456',
+    /**<    元数据配置  */
+    'mysql.default.host'        : 'localhost',
+    'mysql.default.port'        : 3306,
+    'mysql.default.user'        : 'root',
+    'mysql.default.password'    : '',
+    'mysql.default.dbname'      : 'meta_iservice_config',
+
+    /**<    zookeeper配置   */
+    'zookeeper.default.host'    : 'localhost:2181,127.0.0.1:2181',
+    'zookeeper.default.root'    : '/',
+    'zookeeper.default.user'    : 'anonymouse',
+    'zookeeper.default.pass'    : '123456',
   }).makeconf('build/tpl/default.properties', _props);
 }
 
