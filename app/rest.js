@@ -11,13 +11,15 @@ Factory.cleanAll();
 var config  = require('shark').config.create(__dirname + '/../etc/rest.ini');
 Factory.setConfig('rest', config);
 
-['mysql', 'log', 'zookeeper'].forEach(function (type) {
-  var o = config.find(type);
-  var p = '#' + type + '/';
-  for (var i in o) {
-    Factory.setObject(p + i, o[i]);
-  }
-});
+var _confs  = config.find('mysql');
+for (var i in _confs) {
+  Factory.setMysql(i, _confs[i]);
+}
+
+var _confs  = config.find('log');
+for (var i in _confs) {
+  Factory.setLog(i, _confs[i]);
+}
 
 var server  = require(__dirname + '/common/server.js').create({
   'header_prefix' : 'x-app-',
