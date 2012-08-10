@@ -34,9 +34,19 @@ process.argv.slice(2).forEach(function (arg) {
 });
 /* }}} */
 
+/* {{{ private function _extend() */
+var _extend = function (a, b) {
+  var m = require('shark').extend.clone(a);
+  for (var i in b) {
+    m[i] = b[i];
+  }
+  return m;
+};
+/* }}} */
+
 var _props  = path.normalize(Home + '/default-' + os.hostname() + '-' + os.arch() + '.properties');
 if (!path.existsSync(_props) || 1) {
-  Builder.init(null, Home, {
+  Builder.init(null, Home, _extend({
     'dir.root'      : Home,
     'log.root'      : path.normalize(Home + '/log'),
 
@@ -52,7 +62,7 @@ if (!path.existsSync(_props) || 1) {
     'zookeeper.default.root'    : '/',
     'zookeeper.default.user'    : 'anonymouse',
     'zookeeper.default.pass'    : '123456',
-  }).makeconf('build/tpl/default.properties', _props);
+  }, _force)).makeconf('build/tpl/default.properties', _props);
 }
 
 var _me = Builder.init(_props, Home, _force);
