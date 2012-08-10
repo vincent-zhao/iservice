@@ -15,8 +15,8 @@ cov:
 func:
 	@npm install
 	@node ./build/makeconf.js
-	./bin/appctl restart
+	./bin/iservice restart
 	@-./node_modules/mocha/bin/mocha --reporter spec --timeout 6000 test/func/*.js
-	./bin/appctl stop
+	./bin/iservice stop
 
 .PHONY: test
