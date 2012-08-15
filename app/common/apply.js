@@ -17,7 +17,7 @@ exports.create = function (res, url, data, info) {
   var _done = false;
 
   var _ERRORLOG = function (error) {
-    require('shark').factory.getLog('error').exception(error, {
+    require('shark').log.exception(error, {
       'URL' : url,
       'POST': data,
     });

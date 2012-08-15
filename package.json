@@ -9,8 +9,8 @@
     "keywords": [ "zookeeper", "config server", "service" ],
     "dependencies": {
       "pm"          : "=1.0.7",
-      "shark"       : "=0.3.11",
-      "zookeeper"   : "3.4.1-4"
+      "shark"       : "=0.3.14",
+      "zookeeper"   : "=3.4.1-4"
     },
     "engines": {
       "node": ">=0.6.9"
