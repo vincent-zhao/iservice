@@ -23,7 +23,7 @@ for (var i in _confs) {
   Factory.setLog(i, _confs[i]);
 }
 
-Shark.log.setExceptionLogger(config.get('log:error'));
+Shark.setExceptionLogger(config.get('log:error'));
 
 process.on('uncaughtException', function (e) {
   Shark.log.exception(e);
@@ -32,7 +32,7 @@ process.on('uncaughtException', function (e) {
 
 var server  = require(__dirname + '/common/server.js').create({
   'header_prefix' : 'x-app-',
-    'control_root'  : __dirname + '/rest'
+  'control_root'  : __dirname + '/rest'
 });
 
 var events  = Shark.events.create(function (error) {
