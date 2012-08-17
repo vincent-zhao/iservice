@@ -3,6 +3,7 @@
 "use strict";
 
 var Shark   = require('shark');
+var Storage = require(__dirname + '/common/storage.js');
 
 var Factory = Shark.factory;
 Factory.cleanAll();
@@ -21,6 +22,11 @@ for (var i in _confs) {
 var _confs  = config.find('log');
 for (var i in _confs) {
   Factory.setLog(i, _confs[i]);
+}
+
+var _confs  = config.find('zookeeper');
+for (var i in _confs) {
+  Factory.setObject('zookeeper#' + i, Storage.create(_confs[i]));
 }
 
 Shark.setExceptionLogger(config.get('log:error'));
