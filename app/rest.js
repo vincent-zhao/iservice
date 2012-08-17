@@ -31,7 +31,7 @@ for (var i in _confs) {
 
 Shark.setExceptionLogger(config.get('log:error'));
 process.on('uncaughtException', function (e) {
-  Shark.log.exception(e);
+  Shark.logException(e);
   process.exit(1);
 });
 
