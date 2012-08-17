@@ -1,6 +1,7 @@
 /* vim: set expandtab tabstop=2 shiftwidth=2 foldmethod=marker: */
 
 var should  = require('should');
+var storage = require(__dirname + '/../../app/common/storage.js');
 var apply   = require(__dirname + '/../../app/common/apply.js');
 var factory = require('shark').factory;
 
@@ -169,7 +170,8 @@ describe('rest api', function () {
 
   beforeEach(function () {
     factory.cleanAll();
-    factory.setObject('#zookeeper/default', require(__dirname + '/../../app/common/storage.js').create({
+    factory.setObject('#zookeeper/default', storage.create({
+      'host' : 'localhost:2181',
     }));
   });
 
