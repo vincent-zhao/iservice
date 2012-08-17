@@ -287,6 +287,15 @@ exports.create  = function (options) {
   };
   /* }}} */
 
+  /* {{{ public prototype close() */
+  Storage.prototype.close = function () {
+    if (_handle) {
+      _handle.close();
+      _handle = null;
+    }
+  };
+  /* }}} */
+
   return new Storage();
 
 };

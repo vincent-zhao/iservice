@@ -45,7 +45,7 @@ describe('apply interface', function () {
     var _me = apply.create(res, '/a/b/c?d=1', new Buffer('abcd'), {});
     _me.should.have.property('time');
     _me.should.have.property('url');
-    _me.should.have.property('data');
+    _me.should.have.property('data', 'abcd');
 
     /**
      * @强制转换为string, 避免写日志时JSON.stringify出问题
@@ -274,6 +274,10 @@ describe('rest api', function () {
     });
   });
   /* }}} */
+
+  after(function () {
+    factory.getObject('#zookeeper/default').close();
+  });
 
 });
 
