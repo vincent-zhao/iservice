@@ -3,12 +3,14 @@
 var should  = require('should');
 var storage = require(__dirname + '/../../app/common/storage.js');
 
+var _faked  = require('netblackhole').create('21810');
+
 describe('storage with zookeeper test', function () {
 
   /* {{{ should_zookeeper_set_and_get_works_fine() */
   it('should_zookeeper_set_and_get_works_fine', function (done) {
     var _me = storage.create({
-      'host' : 'localhost:2181',
+      'host' : 'localhost:2181',//,127.0.0.1:21810',
     });
 
     _me.get('/i/am/not/exists/' + process.pid, function (error, data) {
