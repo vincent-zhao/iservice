@@ -90,6 +90,17 @@ API.tree = function (req, callback) {
 
 /* {{{ action feedback() */
 API.feedback = function (req, callback) {
+  var t = Date.now() / 1000;
+  var s = Util.format(
+      "INSERT INTO client_session (addtime, modtime, sessid, ipaddr, cversion, nodepath, sessdata) " +
+      "VALUES (%d, %d, '%s', '%s', '%s', '%s', '%s') ON DUPLICATE KEY " +
+      "UPDATE modtime = %d, ipaddr='%s', cversion='%s', nodepath='%s', sessdata='%s'",
+      t, t, 'id', req.info.ipaddr, 'cversion', 'path', 'data', 
+      t, req.info.ipaddr, 'cversion', 'path', 'data'));
+
+  Shark.factory.getMysql('default').query(s, function (error, res) {
+    callback(error, res);
+  });
 };
 /* }}} */
 
