@@ -2,6 +2,7 @@
 
 var should  = require('should');
 var apply   = require(__dirname + '/../../app/common/apply.js');
+var factory = require('shark').factory;
 
 /* {{{ moked http response() */
 function __response() {
@@ -32,7 +33,7 @@ function __response() {
 /* }}} */
 
 beforeEach(function () {
-  require('shark').factory.cleanAll();
+  factory.cleanAll();
 });
 
 describe('apply interface', function () {
@@ -134,7 +135,7 @@ describe('rest ping', function () {
   var ctrol = require(__dirname + '/../../app/rest/ping.js');
 
   beforeEach(function () {
-    require('shark').factory.setConfig('rest', __dirname + '/etc/rest.ini');
+    factory.setConfig('rest', __dirname + '/etc/rest.ini');
   });
 
   /* {{{ should_ping_controller_works_fine() */
@@ -165,6 +166,12 @@ describe('rest api', function () {
 
   var resp  = __response();
   var ctrol = require(__dirname + '/../../app/rest/api.js');
+
+  beforeEach(function () {
+    factory.cleanAll();
+    factory.setObject('#zookeeper/default', require(__dirname + '/../../app/common/storage.js').create({
+    }));
+  });
 
   /* {{{ should_rest_api_index_works_fine() */
   it('should_rest_api_index_works_fine', function (done) {

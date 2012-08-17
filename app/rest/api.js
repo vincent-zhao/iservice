@@ -2,23 +2,12 @@
 
 "use strict";
 
+var Shark   = require('shark');
 var Util    = require('util');
 var iError  = require(__dirname + '/../common/ierror.js');
 
-/* {{{ function _getstorage() */
-/**
- * @ 存储器列表
- */
-var __storages  = {};
 var _getstorage = function () {
-  var idx = '';
-  if (!__storages[idx]) {
-    __storages[idx] = require(__dirname + '/../common/storage.js').create(
-        // XXX: options
-        );
-  }
-
-  return __storages[idx];
+  return Shark.factory.getObject('#zookeeper/default');
 };
 /* }}} */
 
@@ -110,6 +99,9 @@ exports.execute = function (req, callback) {
     return callback(iError.create('ActionNotFound', Util.format('Action "%s" not found.', a)));
   }
   (API[a])(req, function (error, data) {
+    if (error) {
+      Shark.logException(error, req);
+    }
     callback(null, JSON.stringify({
       'error'   : error,
       'data'    : data,

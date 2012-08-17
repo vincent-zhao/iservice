@@ -16,6 +16,7 @@ Factory.setConfig('rest', config);
 
 Shark.setExceptionLogger(config.get('log:error'));
 process.on('uncaughtException', function (e) {
+  console.log(e.stack);
   Shark.logException(e);
   process.exit(1);
 });
