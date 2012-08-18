@@ -96,8 +96,8 @@ API.feedback = function (req, callback) {
       "VALUES (%d, %d, '%s', '%s', '%s', '%s', '%s') ON DUPLICATE KEY " +
       "UPDATE modtime = %d, ipaddr='%s', cversion='%s', nodepath='%s', sessdata='%s'",
       t, t, 'id', req.info.ipaddr, 'cversion', 'path', 'data', 
-      t, req.info.ipaddr, 'cversion', 'path', 'data'));
-
+      t, req.info.ipaddr, 'cversion', 'path', 'data');
+console.log(s);
   Shark.factory.getMysql('default').query(s, function (error, res) {
     callback(error, res);
   });

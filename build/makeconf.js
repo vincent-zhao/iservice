@@ -72,6 +72,7 @@ var task_make_test = function () {
   _me.makedir('test/unit/etc');
   _me.makedir('test/unit/tmp');
 
+  _me.makeconf('build/test', 'test/unit/etc/');
   _me.makeconf('build/tpl/rest.ini', 'test/unit/etc/rest.ini', {
     'statusfile' : path.normalize(__dirname + '/../test/unit/tmp/status'),
   });

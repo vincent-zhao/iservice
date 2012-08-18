@@ -3,7 +3,12 @@
 var should  = require('should');
 var storage = require(__dirname + '/../../app/common/storage.js');
 var apply   = require(__dirname + '/../../app/common/apply.js');
+var config  = require('shark').config;
 var factory = require('shark').factory;
+
+var getconf = function (name) {
+  return config.create(__dirname + '/etc/' + name + '.ini').all();
+};
 
 /* {{{ moked http response() */
 function __response() {
@@ -170,9 +175,8 @@ describe('rest api', function () {
 
   beforeEach(function () {
     factory.cleanAll();
-    factory.setObject('#zookeeper/default', storage.create({
-      'host' : 'localhost:2181',
-    }));
+    factory.setMysql('default', getconf('mysql'));
+    factory.setObject('#zookeeper/default', storage.create(getconf('zookeeper')));
   });
 
   /* {{{ should_rest_api_index_works_fine() */
@@ -272,6 +276,12 @@ describe('rest api', function () {
       (JSON.parse(data)).should.have.property('error', null);
       done();
     });
+  });
+  /* }}} */
+
+  /* {{{ should_rest_api_feedback_works_fine() */
+  it('should_rest_api_feedback_works_fine', function (done) {
+    done();
   });
   /* }}} */
 
