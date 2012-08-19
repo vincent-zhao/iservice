@@ -4,7 +4,7 @@ USE meta_iservice_config;
 
 DROP TABLE IF EXISTS client_session;
 CREATE TABLE client_session (
-  autokid bigint(20) unsigned not null primary key,
+  autokid bigint(20) unsigned not null auto_increment primary key,
   addtime int(10) not null default 0,
   modtime int(10) not null default 0,
   sessid char(32) not null default '',

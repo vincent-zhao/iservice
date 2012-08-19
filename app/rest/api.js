@@ -4,12 +4,17 @@
 
 var Shark   = require('shark');
 var Util    = require('util');
+var Crypto  = require('crypto');
 var iError  = require(__dirname + '/../common/ierror.js');
+
+var _escape = Shark.extend.escape;
+var _signat = function (a) {
+  return Crypto.createHash('md5').update(a.join('')).digest('hex');
+};
 
 var _getstorage = function () {
   return Shark.factory.getObject('#zookeeper/default');
 };
-/* }}} */
 
 /* {{{ function _getwatcher() */
 /**
@@ -18,9 +23,7 @@ var _getstorage = function () {
 var __watchdogs = {};
 var _getwatcher = function (url) {
   if (!__watchdogs[url]) {
-    __watchdogs[url] = require(__dirname + '/../common/watcher.js').create(
-        /**<    delay, recall   */
-        );
+    __watchdogs[url] = require(__dirname + '/../common/watcher.js').create();
   }
 
   return __watchdogs[url];
@@ -46,12 +49,11 @@ API.get = function (req, callback) {
 /* {{{ action set() */
 API.set = function (req, callback) {
   if ('127.0.0.1' !== req.info.addr) {
-    callback(iError.create('AccessDenied', 'Action "set" is not allowed from ' + req.info.addr));
-  } else {
-    _getstorage().set(req.url.shift(), req.data, function (error) {
-      callback(error, '');
-    });
+    return callback(iError.create('AccessDenied', 'Action "set" is not allowed from ' + req.info.addr));
   }
+  _getstorage().set(req.url.shift(), req.data, function (error) {
+    callback(error, '');
+  });
 };
 /* }}} */
 
@@ -90,17 +92,31 @@ API.tree = function (req, callback) {
 
 /* {{{ action feedback() */
 API.feedback = function (req, callback) {
-  var t = parseInt(Date.now() / 1000, 10);
-  var s = Util.format(
-      "INSERT INTO client_session (addtime, modtime, sessid, ipaddr, clientid, nodepath, sessdata) " +
-      "VALUES (%d, %d, '%s', '%s', '%s', '%s', '%s') ON DUPLICATE KEY " +
-      "UPDATE modtime = %d, ipaddr='%s', clientid = '%s', nodepath='%s', sessdata='%s'",
-      t, t, 'id', req.info.ipaddr, req.info.uuid, 'path', 'data', 
-      t, req.info.ipaddr, req.info.uuid, 'path', 'data');
-console.log(s);
 
-return callback(null);
-  Shark.factory.getMysql('default').query(s, function (error, res) {
+  try {
+    var the = JSON.parse(req.data);
+  } catch (e) {
+    return callback(iError.create('FormatError', e));
+  }
+
+  if (!the.path || !the.data) {
+    return callback(iError.create('RequestError', 'Param "path" or "data" empty in post body.'));
+  }
+
+  var sid = _signat([req.info.uuid, the.path]);
+  var key = _escape(the.path.split('').reverse().join('')); /**<    to use mysql index  */
+  var now = parseInt(Date.now() / 1000, 10);
+  var sql = [
+    'INSERT INTO client_session (addtime, modtime, sessid, ipaddr, clientid, nodepath, sessdata)',
+    Util.format(
+        "VALUES (%d, %d, '%s', '%s', '%s', '%s', '%s') ON DUPLICATE KEY UPDATE", 
+        now, now, sid, _escape(req.info.ipaddr), _escape(req.info.uuid), key, _escape(the.data)),
+    Util.format(
+        "modtime = %d, ipaddr = '%s', clientid = '%s', nodepath = '%s', sessdata='%s'", 
+        now, _escape(req.info.ipaddr), _escape(req.info.uuid), key, _escape(the.data))
+      ];
+
+  Shark.factory.getMysql('default').query(sql.join(' '), function (error, res) {
     callback(error, res);
   });
 };
