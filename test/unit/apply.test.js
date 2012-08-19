@@ -281,7 +281,18 @@ describe('rest api', function () {
 
   /* {{{ should_rest_api_feedback_works_fine() */
   it('should_rest_api_feedback_works_fine', function (done) {
-    done();
+    var req = apply.create(resp, '/feedback', JSON.stringify({
+      'path'    : '/root/config/key1',
+        'value' : JSON.stringify({'v' : 1243, 't' : 'abcd'})
+    }), {
+      'ipaddr'  : '1.2.3.4',
+        'uuid'  : 'appname-host-pid-version',
+    });
+    ctrol.execute(req, function (error, data) {
+      should.ok(!error);
+      (JSON.parse(data)).should.have.property('error', null);
+      done();
+    });
   });
   /* }}} */
 

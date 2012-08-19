@@ -90,14 +90,16 @@ API.tree = function (req, callback) {
 
 /* {{{ action feedback() */
 API.feedback = function (req, callback) {
-  var t = Date.now() / 1000;
+  var t = parseInt(Date.now() / 1000, 10);
   var s = Util.format(
-      "INSERT INTO client_session (addtime, modtime, sessid, ipaddr, cversion, nodepath, sessdata) " +
-      "VALUES (%d, %d, '%s', '%s', '%s', '%s', '%s') ON DUPLICATE KEY " +
-      "UPDATE modtime = %d, ipaddr='%s', cversion='%s', nodepath='%s', sessdata='%s'",
-      t, t, 'id', req.info.ipaddr, 'cversion', 'path', 'data', 
-      t, req.info.ipaddr, 'cversion', 'path', 'data');
+      "INSERT INTO client_session (addtime, modtime, sessid, ipaddr, remoteid, nodepath, sessdata) " +
+      "VALUES (%d, %d, '%s', '%s', '%s', '%s', '%s', '%s') ON DUPLICATE KEY " +
+      "UPDATE modtime = %d, ipaddr='%s', remoteid = '%s', nodepath='%s', sessdata='%s'",
+      t, t, 'id', req.info.ipaddr, 'remoteid', 'path', 'data', 
+      t, req.info.ipaddr, 'remoteid', 'path', 'data');
 console.log(s);
+
+return callback(null);
   Shark.factory.getMysql('default').query(s, function (error, res) {
     callback(error, res);
   });
