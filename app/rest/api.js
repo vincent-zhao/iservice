@@ -127,6 +127,11 @@ exports.execute = function (req, callback) {
   if (!API[a] || 'function' !== (typeof API[a])) {
     return callback(iError.create('ActionNotFound', Util.format('Action "%s" not found.', a)));
   }
+
+  /**
+   * @ TODO: Add auth validate here
+   */
+
   (API[a])(req, function (error, data) {
     if (error) {
       Shark.logException(error, req);

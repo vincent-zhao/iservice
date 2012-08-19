@@ -47,7 +47,7 @@ for (var i in _confs) {
 
 var server  = require(__dirname + '/common/server.js').create({
   'header_prefix' : 'x-app-',
-  'control_root'  : __dirname + '/rest'
+    'control_root'  : __dirname + '/rest'
 });
 
 var events  = Shark.events.create(function (error) {
@@ -59,6 +59,19 @@ var events  = Shark.events.create(function (error) {
   require('pm').createWorker().ready(function (socket) {
     server.emit('connection', socket);
   });
+
+  (function cleanExpiredSession() {
+    var sql = 'DELETE FROM client_session WHERE modtime < ' + (Date.now() / 1000 - 1800);
+    Factory.getMysql('default').query(sql, function (error, res) {
+      if (error) {
+        Shark.logException(error);
+      } else {
+        Factory.getLog('debug').notice('CLEAN_SESSION', res);
+      }
+
+      setTimeout(cleanExpiredSession, 600000);
+    });
+  })();
 });
 
 events.wait('ok', function () {
