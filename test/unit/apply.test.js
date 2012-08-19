@@ -289,11 +289,18 @@ describe('rest api', function () {
         'uuid'  : 'host-pid-rand',
     });
     ctrol.execute(req, function (error, data) {
-      /*
       should.ok(!error);
       (JSON.parse(data)).should.have.property('error', null);
-      */
-      done();
+      var sql = 'SELECT * FROM client_session WHERE sessid="3965ab969a6453bba875045ab9c00683" ORDER BY modtime DESC LIMIT 1';
+      factory.getMysql('default').query(sql, function (error, res) {
+        should.ok(!error);
+        res = res.pop();
+        res.should.have.property('ipaddr',  '1.2.3.4');
+        res.should.have.property('nodepath', '1yek/gifnoc/toor/');
+        res.should.have.property('sessdata', '{"v":1243,"t":"abcd"}');
+        res.should.have.property('clientid', 'host-pid-rand');
+        done();
+      });
     });
   });
   /* }}} */
