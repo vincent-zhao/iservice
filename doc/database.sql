@@ -9,7 +9,7 @@ CREATE TABLE client_session (
   modtime int(10) not null default 0,
   sessid char(32) not null default '',
   ipaddr char(15) not null default '',
-  remoteid varchar(64) not null default '',
+  clientid varchar(64) not null default '',
   nodepath varchar(1024) not null default '',
   sessdata text,
   UNIQUE KEY uk_id (sessid),

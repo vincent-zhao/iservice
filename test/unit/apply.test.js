@@ -286,7 +286,7 @@ describe('rest api', function () {
         'value' : JSON.stringify({'v' : 1243, 't' : 'abcd'})
     }), {
       'ipaddr'  : '1.2.3.4',
-        'uuid'  : 'appname-host-pid-version',
+        'uuid'  : 'host-pid-rand',
     });
     ctrol.execute(req, function (error, data) {
       should.ok(!error);

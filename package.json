@@ -19,7 +19,7 @@
       "should"          : ">=0.4.2",
       "mocha"           : ">=0.9.0",
       "netblackhole"    : ">=0.0.2",
-      "iservice-client" : ">=0.0.1",
+      "iservice-client" : ">=0.0.2",
       "urllib"          : ">=0.2.6",
       "visionmedia-jscoverage" : ">=1.0.0"
     },
