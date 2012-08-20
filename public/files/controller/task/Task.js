@@ -38,7 +38,12 @@ Ext.define('Iservice.controller.task.Task', {
         url : 'task/gettasks',
         method : 'GET',
         success : function(res){
-          _self.getTaskPanel().getStore().loadData(JSON.parse(res.responseText));
+          var data = JSON.parse(res.responseText);
+          if (data.message !== '') {
+            alert('get tasks error');
+          } else {
+            _self.getTaskPanel().getStore().loadData(data.data);
+          }
         }
       });
     }
@@ -54,7 +59,11 @@ Ext.define('Iservice.controller.task.Task', {
       },
       success : function(res){
         var data = JSON.parse(res.responseText);
-        _self.getTaskDupPanel().getStore().loadData(data);
+        if (data.message !== '') {
+          alert('get task dups error');
+        } else {
+          _self.getTaskDupPanel().getStore().loadData(data.data);
+        }
       }
 
     });

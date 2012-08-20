@@ -72,9 +72,14 @@ Ext.define('Iservice.controller.config.ConfigTree', {
         url : 'view/configtree',
         method : 'GET',
         success : function(res){
-          _self.result.tree = JSON.parse(res.responseText);
-          if (--count === 0) {
-            render();
+          var data = JSON.parse(res.responseText);
+          if (data.message !== '') {
+            alert('get configtree error');
+          } else {
+            _self.result.tree = data.data;
+            if (--count === 0) {
+              render();
+            }
           }
         }
       });
@@ -85,9 +90,14 @@ Ext.define('Iservice.controller.config.ConfigTree', {
         url : 'edit/getdups',
         method : 'GET',
         success : function(res){
-          _self.result.dups = JSON.parse(res.responseText);
-          if (--count === 0) {
-            render();
+          var data = JSON.parse(res.responseText);
+          if (data.message !== '') {
+            alert('get dups error');
+          } else {
+            _self.result.dups = data.data;
+            if (--count === 0) {
+              render();
+            }
           }
         }
       });  
@@ -219,8 +229,12 @@ Ext.define('Iservice.controller.config.ConfigTree', {
         },
         success : function (res) {
           var data = JSON.parse(res.responseText);
-          content.update(data.content);
-          other.update(data.elseinfo);
+          if (data.message !== '') {
+            alert('get config content error');
+          } else {
+            content.update(data.content);
+            other.update(data.elseinfo);
+          }
         }
       });
     }

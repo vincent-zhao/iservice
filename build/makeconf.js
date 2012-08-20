@@ -10,6 +10,7 @@ var __APPNAME__ = 'iservice';
  * @强制参数 
  */
 var _force  = Builder.parseProperties(Home + '/_private.properties');
+var _test   = Builder.parseProperties(Home + '/_test.properties');
 
 /* {{{ process argv parse */
 
@@ -46,7 +47,7 @@ var _extend = function (a, b) {
 
 var _props  = path.normalize(Home + '/default-' + os.hostname() + '-' + os.arch() + '.properties');
 if (!path.existsSync(_props) || 1) {
-  Builder.init(null, Home, _extend({
+  var builder = Builder.init(null, Home, _extend({
     'dir.root'      : Home,
     'log.root'      : path.normalize(Home + '/log'),
 
@@ -62,10 +63,18 @@ if (!path.existsSync(_props) || 1) {
     'zookeeper.default.root'    : '/',
     'zookeeper.default.user'    : 'anonymouse',
     'zookeeper.default.pass'    : '123456',
-  }, _force)).makeconf('build/tpl/default.properties', _props);
+
+    'public.ui.dir'  : __dirname + '/../public',
+
+    'svn.ui.dir'     : __dirname + '/../run/svn',
+
+  }, _force));
+
+  builder.makeconf('build/tpl/default.properties', _props);
+  builder.makedir('run/svn');
 }
 
-var _me = Builder.init(_props, Home, _force);
+var _me = Builder.init(_props, Home, _test);
 
 /* {{{ task_make_test() */
 var task_make_test = function () {
@@ -76,6 +85,12 @@ var task_make_test = function () {
   _me.makeconf('build/tpl/rest.ini', 'test/unit/etc/rest.ini', {
     'statusfile' : path.normalize(__dirname + '/../test/unit/tmp/status'),
   });
+
+  _me.makeconf('build/tpl/ui.ini', 'test/unit/etc/ui.ini', {
+    'log.root'    : __dirname + '/../test/unit/tmp',
+    'svn.ui.dir'  : __dirname + '/../test/unit/tmp',
+  });
+
 };
 
 /* }}} */

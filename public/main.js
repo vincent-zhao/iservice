@@ -1,27 +1,31 @@
-Ext.application({
+Ext.onReady(function(){
 
-  name: 'Iservice',
+  Ext.Loader.setConfig({enabled:true});
 
-  appFolder: 'public/files',
+  Ext.application({
 
-  controllers : [
-    'ModuleChoose',
-    'config.ConfigTree',
-    'config.EditPanel',
-    'task.Task'
-  ],
+    name: 'Iservice',
 
-  launch: function() {
-    var main = Ext.create('Iservice.view.config.Main');
+    appFolder: 'public/files',
 
-    Ext.create('Ext.container.Viewport', {
-      layout : 'fit',
-      id : 'main_view',
-      items : [main]
-    });
+    controllers : [
+      'ModuleChoose',
+      'config.ConfigTree',
+      'config.EditPanel',
+      'task.Task'
+    ],
 
-    this.getController('config.ConfigTree').fireEvent('ok');
+    launch: function() {
+      var main = Ext.create('Iservice.view.config.Main');
 
-  }
+      Ext.create('Ext.container.Viewport', {
+        layout : 'fit',
+        id : 'main_view',
+        items : [main]
+      });
+
+      this.getController('config.ConfigTree').fireEvent('ok');
+
+    }
+  });
 });
-

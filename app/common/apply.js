@@ -35,7 +35,7 @@ exports.create = function (res, url, data, info) {
     }
 
     res.writeHead(code ? parseInt(code, 10) : 200, header);
-    res.end(data.toString());
+    res.end(data);
     _done = true;
   };
   /* }}} */
