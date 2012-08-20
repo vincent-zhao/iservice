@@ -12,6 +12,27 @@ var _signat = function (a) {
   return Crypto.createHash('md5').update(a.join('')).digest('hex');
 };
 
+/**
+ * @ 更新session
+ */
+var _stouch = function (path, req, callback) {
+
+  var sid = _signat([req.info.uuid, path]);
+  var key = _escape(path.split('').reverse().join('')); /**<    to use mysql index  */
+  var now = parseInt(Date.now() / 1000, 10);
+  var sql = [
+    'INSERT INTO client_session (addtime, modtime, sessid, ipaddr, clientid, nodepath, sessdata)',
+    Util.format(
+        "VALUES (%d, %d, '%s', '%s', '%s', '%s', '%s') ON DUPLICATE KEY UPDATE", 
+        now, now, sid, _escape(req.info.ipaddr), _escape(req.info.uuid), key, _escape(req.data || '')),
+    Util.format(
+        "modtime = %d, ipaddr = '%s', clientid = '%s', nodepath = '%s', sessdata='%s'", 
+        now, _escape(req.info.ipaddr), _escape(req.info.uuid), key, _escape(req.data || ''))
+      ];
+
+  Shark.factory.getMysql('default').query(sql.join(' '), callback);
+};
+
 var _getstorage = function () {
   return Shark.factory.getObject('#zookeeper/default');
 };
@@ -70,6 +91,12 @@ API.watch = function (req, callback) {
   var u = req.url.shift();
   var w = _getwatcher(u);
 
+  if ((100 * Math.random()) <= (req.info.touchratio || 10)) {
+    _stouch(u, req, function (error, res) {
+      error && Shark.logException(error);
+    });
+  }
+
   var i = w.push(function (data) {
     callback(null, data);
     if (t) {
@@ -87,38 +114,6 @@ API.watch = function (req, callback) {
     w.emit(curr);
   });
 
-};
-/* }}} */
-
-/* {{{ action feedback() */
-API.feedback = function (req, callback) {
-
-  try {
-    var the = JSON.parse(req.data);
-  } catch (e) {
-    return callback(iError.create('FormatError', e));
-  }
-
-  if (!the.path || !the.data) {
-    return callback(iError.create('RequestError', 'Param "path" or "data" empty in post body.'));
-  }
-
-  var sid = _signat([req.info.uuid, the.path]);
-  var key = _escape(the.path.split('').reverse().join('')); /**<    to use mysql index  */
-  var now = parseInt(Date.now() / 1000, 10);
-  var sql = [
-    'INSERT INTO client_session (addtime, modtime, sessid, ipaddr, clientid, nodepath, sessdata)',
-    Util.format(
-        "VALUES (%d, %d, '%s', '%s', '%s', '%s', '%s') ON DUPLICATE KEY UPDATE", 
-        now, now, sid, _escape(req.info.ipaddr), _escape(req.info.uuid), key, _escape(the.data)),
-    Util.format(
-        "modtime = %d, ipaddr = '%s', clientid = '%s', nodepath = '%s', sessdata='%s'", 
-        now, _escape(req.info.ipaddr), _escape(req.info.uuid), key, _escape(the.data))
-      ];
-
-  Shark.factory.getMysql('default').query(sql.join(' '), function (error, res) {
-    callback(error, res);
-  });
 };
 /* }}} */
 

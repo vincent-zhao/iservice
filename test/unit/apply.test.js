@@ -225,13 +225,27 @@ describe('rest api', function () {
 
   /* {{{ should_rest_api_watch_timeout_works_fine() */
   it('should_rest_api_watch_timeout_works_fine', function (done) {
-    var req = apply.create(resp, '/watch/test%2Fkey2', '', {'tmout' : 100});
+    var req = apply.create(resp, '/watch/test%2Fkey2', '{"k":"i am a bad boy"}', {
+      'tmout' : 100,
+        'ipaddr': '1.2.3.4',
+        'uuid'  : 'host-pid-rand',
+        'touchratio' : 101,
+    });
 
     var now = Date.now();
     ctrol.execute(req, function (error, data) {
       should.ok(!error);
-      (Date.now() - now).should.below(110);
-      done();
+      (Date.now() - now).should.below(150);
+      var sql = 'SELECT * FROM client_session WHERE sessid="3965ab969a6453bba875045ab9c00683" ORDER BY modtime DESC LIMIT 1';
+      factory.getMysql('default').query(sql, function (error, res) {
+        should.ok(!error);
+        res = res.pop();
+        res.should.have.property('ipaddr',  '1.2.3.4');
+        res.should.have.property('nodepath', '1yek/gifnoc/toor/');
+        res.should.have.property('sessdata', '{"v":1243,"t":"abcd"}');
+        res.should.have.property('clientid', 'host-pid-rand');
+        done();
+      });
     });
   });
   /* }}} */
@@ -250,7 +264,11 @@ describe('rest api', function () {
 
   /* {{{ should_rest_api_watch_update_works_fine() */
   it('should_rest_api_watch_update_works_fine', function (done) {
-    var req = apply.create(resp, '/watch/test%2Fkey3', '', {'interval' : 100});
+    var req = apply.create(resp, '/watch/test%2Fkey3', '', {
+      'interval' : 100,
+        'ipaddr': '1.2.3.4',
+        'uuid'  : 'host-pid-rand',
+    });
     var now = Date.now();
     ctrol.execute(req, function (error, data) {
       should.ok(!error);
@@ -275,32 +293,6 @@ describe('rest api', function () {
       should.ok(!error);
       (JSON.parse(data)).should.have.property('error', null);
       done();
-    });
-  });
-  /* }}} */
-
-  /* {{{ should_rest_api_feedback_works_fine() */
-  it('should_rest_api_feedback_works_fine', function (done) {
-    var req = apply.create(resp, '/feedback', JSON.stringify({
-      'path'    : '/root/config/key1',
-        'data'  : JSON.stringify({'v' : 1243, 't' : 'abcd'})
-    }), {
-      'ipaddr'  : '1.2.3.4',
-        'uuid'  : 'host-pid-rand',
-    });
-    ctrol.execute(req, function (error, data) {
-      should.ok(!error);
-      (JSON.parse(data)).should.have.property('error', null);
-      var sql = 'SELECT * FROM client_session WHERE sessid="3965ab969a6453bba875045ab9c00683" ORDER BY modtime DESC LIMIT 1';
-      factory.getMysql('default').query(sql, function (error, res) {
-        should.ok(!error);
-        res = res.pop();
-        res.should.have.property('ipaddr',  '1.2.3.4');
-        res.should.have.property('nodepath', '1yek/gifnoc/toor/');
-        res.should.have.property('sessdata', '{"v":1243,"t":"abcd"}');
-        res.should.have.property('clientid', 'host-pid-rand');
-        done();
-      });
     });
   });
   /* }}} */
