@@ -57,6 +57,14 @@ API.set = function (req, callback) {
 };
 /* }}} */
 
+/* {{{ action tree() */
+API.tree = function (req, callback) {
+  _getstorage().tree(req.url.shift(), function (error, data) {
+    callback(error, data);
+  });
+};
+/* }}} */
+
 /* {{{ action watch() */
 API.watch = function (req, callback) {
   var u = req.url.shift();
@@ -73,20 +81,12 @@ API.watch = function (req, callback) {
   var t = setTimeout(function () {
     w.remove(i);
     callback(null, null);
-  }, req.info.tmout || 60000);
+  }, req.info.tmout || 59000);
 
   _getstorage().watch(u, req.info.interval || 3000, function (curr, prev) {
     w.emit(curr);
   });
 
-};
-/* }}} */
-
-/* {{{ action tree() */
-API.tree = function (req, callback) {
-  _getstorage().tree(req.url.shift(), function (error, data) {
-    callback(error, data);
-  });
 };
 /* }}} */
 
